@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_temperature">
+
+
+    <fragment
+        android:id="@+id/navigation_temperature"
+        android:name="com.project.tlogger.ui.temperature.TemperatureFragment"
+        android:label="@string/title_temperature"
+        tools:layout="@layout/temperature_fragment" />
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.project.tlogger.ui.history.HistoryFragment"
+        android:label="@string/title_history"
+        tools:layout="@layout/history_fragment" />
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.project.tlogger.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/settings_fragment" />
+
+    <fragment
+        android:id="@+id/navigation_about"
+        android:name="com.project.tlogger.ui.about.AboutFragment"
+        android:label="@string/title_about"
+        tools:layout="@layout/about_fragment" />
+
+</navigation>

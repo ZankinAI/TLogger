@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.temperature.pages.TemperatureChartFragment">
+
+    <GridLayout
+
+        android:id="@+id/grid_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:rowCount="4"
+        android:columnCount="2"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <TextView
+            android:id="@+id/nfc_id"
+            android:text="NFC ID"
+            android:textColor="#8cb03e"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1"
+
+            />
+
+        <TextView
+            android:id="@+id/number_of_measurements"
+            android:text="Количество измерений"
+            android:textColor="#8cb03e"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1"
+            />
+
+        <TextView
+            android:id="@+id/nfc_id_text"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:text="04:83:63:00:76:0E:0C"
+            android:textColor="#8cb03e"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:background="@drawable/background_textview"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1" />
+
+        <TextView
+            android:id="@+id/number_of_measurements_text"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:text="1051"
+            android:textColor="#8cb03e"
+            android:background="@drawable/background_textview"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1" />
+
+        <TextView
+            android:id="@+id/configuration_time"
+            android:text="Время настройки"
+            android:layout_marginTop="10dp"
+            android:textColor="#8cb03e"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1"
+
+            />
+
+        <TextView
+            android:id="@+id/logging_for"
+            android:text="Время записи"
+            android:layout_marginTop="10dp"
+            android:textColor="#8cb03e"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1"
+            />
+
+        <TextView
+            android:id="@+id/configuration_time_text"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:text="2021-7-9 10:57:08"
+            android:textColor="#8cb03e"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:background="@drawable/background_textview"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1" />
+
+        <TextView
+            android:id="@+id/logging_for_text"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:text="3 дня 23 часа"
+            android:textColor="#8cb03e"
+            android:background="@drawable/background_textview"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_columnWeight="1" />
+
+    </GridLayout>
+
+    <WebView
+        android:id="@+id/webview_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="160dp"
+        android:layout_marginTop="100dp"
+        app:layout_constraintTop_toBottomOf="@id/grid_status"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
+        android:id="@+id/values_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="28 "
+        android:textColor="#FFEB3B"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/values_count"
+        app:layout_constraintBottom_toTopOf="@id/status"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/values_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="значений было возвращено"
+        android:textColor="#8cb03e"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/values_count_text"
+        app:layout_constraintBottom_toTopOf="@id/status"
+        />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Статус измеренных значений: "
+        android:textColor="#8cb03e"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/status_text"
+        app:layout_constraintBottom_toTopOf="@id/measurment_intertval"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ОК"
+        android:textColor="#FFEB3B"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/status"
+        app:layout_constraintBottom_toTopOf="@id/measurment_intertval"
+        />
+
+
+    <TextView
+        android:id="@+id/measurment_intertval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Интервал измерения: каждые "
+        android:textColor="#8cb03e"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/measurment_intertval_text"
+        app:layout_constraintBottom_toTopOf="@id/min_valid_label"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/measurment_intertval_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15 минут"
+        android:textColor="#FFEB3B"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/measurment_intertval"
+        app:layout_constraintBottom_toTopOf="@id/min_valid_label"
+        />
+
+    <TextView
+        android:id="@+id/min_valid_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Минимально допустимая температура: "
+        android:textColor="#8cb03e"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/min_valid_text"
+        app:layout_constraintBottom_toTopOf="@id/max_valid_label"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/min_valid_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 'C"
+        android:textColor="#FFEB3B"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/min_valid_label"
+        app:layout_constraintBottom_toTopOf="@id/max_valid_label"
+        />
+
+    <TextView
+        android:id="@+id/max_valid_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Максимально допустимая температура: "
+        android:textColor="#8cb03e"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/max_valid_text"
+        app:layout_constraintBottom_toTopOf="@id/page"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/max_valid_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15 'C"
+        android:textColor="#FFEB3B"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/max_valid_label"
+        app:layout_constraintBottom_toTopOf="@id/page"
+        />
+
+    <ImageView
+        android:id="@+id/page"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="55dp"
+        android:src="@drawable/page2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
