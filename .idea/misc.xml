@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/anychart.xml" value="0.1895" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/background_textview.xml" value="0.1895" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/gradient_background.xml" value="0.1295" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.197" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.197" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.197" />
@@ -16,6 +17,7 @@
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/fragment_home.xml" value="0.17481884057971014" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/fragment_notifications.xml" value="0.17481884057971014" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/history_fragment.xml" value="0.25" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/layout_action_bar.xml" value="0.5" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/list_item.xml" value="0.1" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/settings_fragment.xml" value="0.17481884057971014" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_chart_fragment.xml" value="0.2" />

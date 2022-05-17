@@ -1,12 +1,17 @@
 package com.project.tlogger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,9 +31,22 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        getSupportActionBar().show();
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflater.inflate(R.layout.layout_action_bar,null);
+        ActionBar bar = getSupportActionBar();
+        bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        bar.setCustomView(v);
+        /*//bar.setDisplayOptions(ActionBar.DISPLAY_USE_LOGO);
+        bar.setIcon(getDrawable(R.drawable.logo));
+        //bar.setDisplayShowHomeEnabled(true);
+        bar.setHomeButtonEnabled(true);
+        bar.setTitle("TempSense");
+        bar.setDisplayShowTitleEnabled(true);
+        bar.show();*/
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
