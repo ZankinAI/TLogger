@@ -8,121 +8,150 @@
     tools:context=".ui.temperature.pages.TemperatureChartFragment"
     >
 
-    <GridLayout
 
-        android:id="@+id/grid_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:rowCount="4"
-        android:columnCount="2"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
             android:id="@+id/nfc_id"
             android:text="NFC ID"
-            android:textColor="#8cb03e"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:textColor="#ffffff"
+            android:background="#FF6600"
             android:textStyle="bold"
-            android:textSize="12sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1"
+            android:textSize="18sp"
+            android:paddingLeft="10dp"
+            android:gravity="center_vertical"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
 
             />
 
-        <TextView
+    <TextView
+        android:id="@+id/nfc_id_text"
+
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="220dp"
+        android:background="@drawable/background_textview"
+        android:gravity="center"
+        android:text="04:83:63:00:76:0E:0C"
+        android:textColor="#FF6600"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@id/nfc_id"
+        app:layout_constraintTop_toTopOf="@id/nfc_id" />
+
+    <TextView
             android:id="@+id/number_of_measurements"
             android:text="Количество измерений"
-            android:textColor="#8cb03e"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+
+            android:paddingLeft="10dp"
+            android:textColor="#ffffff"
+            android:background="#FF6600"
             android:textStyle="bold"
-            android:textSize="12sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/nfc_id"
+            app:layout_constraintLeft_toLeftOf="@id/nfc_id"
             />
 
-        <TextView
-            android:id="@+id/nfc_id_text"
-            android:layout_width="150dp"
-            android:layout_height="25dp"
-            android:text="04:83:63:00:76:0E:0C"
-            android:textColor="#8cb03e"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:background="@drawable/background_textview"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1" />
+
 
         <TextView
             android:id="@+id/number_of_measurements_text"
-            android:layout_width="150dp"
-            android:layout_height="25dp"
+
             android:text="1051"
-            android:textColor="#8cb03e"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="220dp"
             android:background="@drawable/background_textview"
-            android:textStyle="bold"
-            android:textSize="12sp"
             android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1" />
+            android:textColor="#FF6600"
+
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="@id/number_of_measurements"
+            app:layout_constraintTop_toTopOf="@id/number_of_measurements" />
 
         <TextView
             android:id="@+id/configuration_time"
             android:text="Время настройки"
-            android:layout_marginTop="10dp"
-            android:textColor="#8cb03e"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+
+            android:paddingLeft="10dp"
+            android:textColor="#ffffff"
+            android:background="#FF6600"
             android:textStyle="bold"
-            android:textSize="12sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/number_of_measurements"
+            app:layout_constraintLeft_toLeftOf="@id/nfc_id"
 
             />
+
+    <TextView
+        android:id="@+id/configuration_time_text"
+        android:text="2021-7-9 10:57:08"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="220dp"
+
+        android:background="@drawable/background_textview"
+        android:gravity="center"
+        android:textColor="#FF6600"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@id/configuration_time"
+        app:layout_constraintTop_toTopOf="@id/configuration_time" />
 
         <TextView
             android:id="@+id/logging_for"
             android:text="Время записи"
-            android:layout_marginTop="10dp"
-            android:textColor="#8cb03e"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="20dp"
+
+            android:textColor="#ffffff"
+            android:background="#FF6600"
             android:textStyle="bold"
-            android:textSize="12sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/configuration_time"
+            app:layout_constraintLeft_toLeftOf="@id/nfc_id"
             />
 
-        <TextView
-            android:id="@+id/configuration_time_text"
-            android:layout_width="150dp"
-            android:layout_height="25dp"
-            android:text="2021-7-9 10:57:08"
-            android:textColor="#8cb03e"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:background="@drawable/background_textview"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1" />
+
 
         <TextView
             android:id="@+id/logging_for_text"
+            android:text="25 секунд"
             android:layout_width="150dp"
-            android:layout_height="25dp"
-            android:text="3 дня 23 часа"
-            android:textColor="#8cb03e"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="220dp"
             android:background="@drawable/background_textview"
-            android:textStyle="bold"
-            android:textSize="12sp"
             android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_columnWeight="1" />
+            android:textColor="#FF6600"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="@id/logging_for"
+            app:layout_constraintTop_toTopOf="@id/logging_for" />
 
-    </GridLayout>
+
 
     <WebView
         android:id="@+id/webview_chart"
         android:layout_width="wrap_content"
         android:layout_height="160dp"
-        android:layout_marginTop="100dp"
-        app:layout_constraintTop_toBottomOf="@id/grid_status"
+        android:layout_marginTop="60dp"
+        app:layout_constraintTop_toBottomOf="@id/logging_for"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
@@ -147,7 +176,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="значений было возвращено"
-        android:textColor="#8cb03e"
+        android:textColor="#ffffff"
         android:textStyle="bold"
         android:textSize="16sp"
         android:gravity="center"
@@ -162,7 +191,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Статус измеренных значений: "
-        android:textColor="#8cb03e"
+        android:textColor="#ffffff"
         android:textStyle="bold"
         android:textSize="14sp"
         android:gravity="center"
@@ -194,7 +223,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Интервал измерения: каждые "
-        android:textColor="#8cb03e"
+        android:textColor="#ffffff"
         android:textStyle="bold"
         android:textSize="14sp"
         android:gravity="center"
@@ -225,7 +254,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Минимально допустимая температура: "
-        android:textColor="#8cb03e"
+        android:textColor="#ffffff"
         android:textStyle="bold"
         android:textSize="14sp"
         android:gravity="center"
@@ -256,7 +285,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Максимально допустимая температура: "
-        android:textColor="#8cb03e"
+        android:textColor="#ffffff"
         android:textStyle="bold"
         android:textSize="14sp"
         android:gravity="center"

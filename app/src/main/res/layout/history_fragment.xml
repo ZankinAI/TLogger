@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
     tools:context=".ui.history.HistoryFragment">
 
     <TextView
@@ -15,13 +14,13 @@
         android:text="ИСТОРИЯ"
         android:textAlignment="center"
         android:textColor="#E8B410"
-        android:textStyle="bold"
+
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="5dp"
         android:layout_marginTop="30dp"
         android:background="#E8B410">
     </View>
