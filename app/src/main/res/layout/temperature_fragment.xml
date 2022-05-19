@@ -7,23 +7,34 @@
     android:layout_height="match_parent"
     tools:context=".ui.temperature.TemperatureFragment">
 
+    <View
+        android:id="@+id/view_line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2D8AB8"
+        app:layout_constraintTop_toTopOf="parent" >
+    </View>
+
     <TextView
         android:id="@+id/active_configuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ТЕКУЩЕЕ СОСТОЯНИЕ"
         android:textAlignment="center"
-        android:textColor="#E8B410"
+        android:background="#E7F7FF"
+        android:textColor="#2D8AB8"
+        android:fontFamily="serif"
+        android:textStyle="bold"
 
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/view_line1" />
 
     <View
         android:id="@+id/view_line"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#E8B410"
+        android:layout_height="1dp"
+        android:background="#2D8AB8"
         app:layout_constraintTop_toBottomOf="@+id/active_configuration" >
     </View>
 
