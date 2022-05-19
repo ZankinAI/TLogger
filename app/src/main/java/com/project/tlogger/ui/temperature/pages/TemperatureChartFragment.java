@@ -16,6 +16,7 @@ import android.webkit.WebView;
 
 import com.project.tlogger.R;
 
+
 import kotlin.text.UStringsKt;
 
 public class TemperatureChartFragment extends Fragment {
@@ -90,9 +91,12 @@ public class TemperatureChartFragment extends Fragment {
         return new TemperatureChartFragment();
     }
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+
         View view = inflater.inflate(R.layout.temperature_chart_fragment, container, false);
         WebView browserChart=view.findViewById(R.id.webview_chart);
         WebSettings webSettings = browserChart.getSettings();
