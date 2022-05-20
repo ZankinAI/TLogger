@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.project.tlogger.ui.temperature.pages.TemperatureChartFragment;
+import com.project.tlogger.ui.temperature.pages.TemperatureGraphFragment;
 import com.project.tlogger.ui.temperature.pages.TemperatureStatusFragment;
 
 public class TemperatureAdapter extends FragmentStateAdapter{
@@ -28,7 +29,7 @@ public class TemperatureAdapter extends FragmentStateAdapter{
             case 1:
                 return new TemperatureChartFragment();
             case 2:
-                return new TemperatureChartFragment();
+                return new TemperatureGraphFragment();
 
             default:
                 return new TemperatureStatusFragment();
