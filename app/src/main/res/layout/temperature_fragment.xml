@@ -7,36 +7,28 @@
     android:layout_height="match_parent"
     tools:context=".ui.temperature.TemperatureFragment">
 
-    <View
-        android:id="@+id/view_line1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#2D8AB8"
-        app:layout_constraintTop_toTopOf="parent" >
-    </View>
 
     <TextView
         android:id="@+id/active_configuration"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ТЕКУЩЕЕ СОСТОЯНИЕ"
+        android:layout_height="40dp"
+        android:fontFamily="More Fonts..."
+        android:text="Текущее состояние"
         android:textAlignment="center"
-        android:background="#E7F7FF"
         android:textColor="#2D8AB8"
-        android:fontFamily="serif"
-        android:textStyle="bold"
-
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_line1" />
 
-    <View
-        android:id="@+id/view_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#2D8AB8"
-        app:layout_constraintTop_toBottomOf="@+id/active_configuration" >
-    </View>
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="-10dp"/>
+
+<!--    <View-->
+<!--        android:id="@+id/view_line"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:background="#2D8AB8"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/active_configuration" >-->
+<!--    </View>-->
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager2"
@@ -45,7 +37,7 @@
         android:layout_marginTop="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_line"
+        app:layout_constraintTop_toBottomOf="@+id/active_configuration"
         />
 
 
