@@ -11,28 +11,33 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.project.tlogger.R;
+import com.project.tlogger.databinding.AboutFragmentBinding;
 
 public class AboutFragment extends Fragment {
+    private AboutFragmentBinding binding;
 
-    private AboutViewModel mViewModel;
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        AboutViewModel dashboardViewModel =
+                new ViewModelProvider(this).get(AboutViewModel.class);
 
-    public static AboutFragment newInstance() {
-        return new AboutFragment();
+        binding = AboutFragmentBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        final TextView textView = binding.textAbout;
+
+        //textView.setMovementMethod(new ScrollingMovementMethod());
+        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        return root;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.about_fragment, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(AboutViewModel.class);
-        // TODO: Use the ViewModel
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
 }

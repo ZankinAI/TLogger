@@ -1,13 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.about.AboutFragment">
 
     <TextView
+        android:id="@+id/title_about"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp"
+        android:fontFamily="@font/roboto_bold"
+        android:gravity="center"
+        android:text="ТЕКУЩЕЕ СОСТОЯНИЕ"
+        android:textColor="#A4FF5722"
+        android:textSize="20dp"
 
-</FrameLayout>
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/line_about"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#A4FF5722"
+
+        app:layout_constraintTop_toBottomOf="@+id/title_about">
+    </View>
+
+    <ScrollView
+        android:id="@+id/scroll_about"
+        app:layout_constraintTop_toBottomOf="@id/line_about"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:fillViewport="true">
+        <TextView
+            android:id="@+id/text_about"
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:justificationMode="inter_word"
+            android:layout_weight="1.0"/>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

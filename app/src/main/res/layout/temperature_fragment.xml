@@ -8,19 +8,6 @@
     tools:context=".ui.temperature.TemperatureFragment">
 
 
-    <TextView
-        android:id="@+id/active_configuration"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:fontFamily="More Fonts..."
-        android:text="Текущее состояние"
-        android:textAlignment="center"
-        android:textColor="#2D8AB8"
-        android:textSize="20sp"
-
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="-10dp"/>
 
 <!--    <View-->
 <!--        android:id="@+id/view_line"-->
@@ -34,10 +21,9 @@
         android:id="@+id/viewpager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/active_configuration"
+        app:layout_constraintTop_toBottomOf="parent"
         />
 
 

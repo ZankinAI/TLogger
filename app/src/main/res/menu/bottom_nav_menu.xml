@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/navigation_temperature"
-        android:icon="@drawable/temperature"
+        android:icon="@drawable/thermometer"
         android:title="@string/title_temperature" />
 
     <item
@@ -14,12 +14,12 @@
 
     <item
         android:id="@+id/navigation_settings"
-        android:icon="@drawable/settings"
+        android:icon="@drawable/setting"
         android:title="@string/title_settings" />
 
     <item
         android:id="@+id/navigation_about"
-        android:icon="@drawable/about"
+        android:icon="@drawable/info"
         android:title="@string/title_about" />
 
 </menu>
