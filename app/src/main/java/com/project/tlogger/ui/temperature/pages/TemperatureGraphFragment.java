@@ -74,7 +74,6 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
         chart.getAxisRight().setDrawLabels(false);
 
 
-        //chart.getXAxis().setAxisMinimum(0);
         chart.getXAxis().setLabelCount(4);
         chart.getXAxis().setDrawGridLines(true);
         chart.getXAxis().setDrawLimitLinesBehindData(false);
