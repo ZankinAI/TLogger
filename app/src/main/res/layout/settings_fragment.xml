@@ -14,7 +14,7 @@
         android:paddingVertical="5dp"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="ТЕКУЩЕЕ СОСТОЯНИЕ"
+        android:text="НАСТРОЙКИ"
         android:textColor="#A4FF5722"
         android:textSize="20dp"
 
