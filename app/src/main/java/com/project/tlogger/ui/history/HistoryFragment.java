@@ -69,11 +69,7 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 someEventListener.someEvent("Item");
-                /*if (((ListView)adapterView).getTag()!=null){
-                    ((View)((ListView)adapterView).getTag()).setBackgroundDrawable(null);
-                }*/
-                //((ListView)adapterView).setTag(view);
-                //view.setBackgroundColor(Color.GRAY);
+
 
             }
         });
