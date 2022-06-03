@@ -7,4 +7,28 @@
     <string name="title_history">История</string>
     <string name="title_settings">Настройки</string>
     <string name="title_about">О программе</string>
+    <string-array name="time">
+        <item>секунд</item>
+        <item>минут</item>
+        <item>часов</item>
+    </string-array>
+
+    <plurals name="minuits_plural">
+        <item quantity="one">%d минуту</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+    </plurals>
+
+    <plurals name="seconds_plural">
+        <item quantity="one">%d секунду</item>
+        <item quantity="few">%d секунды</item>
+        <item quantity="many">%d секунд</item>
+    </plurals>
+
+    <plurals name="hours_plural">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+    </plurals>
+
 </resources>

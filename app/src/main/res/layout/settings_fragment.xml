@@ -15,7 +15,7 @@
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
         android:text="НАСТРОЙКИ"
-        android:textColor="#A4FF5722"
+        android:textColor="#922D8AB8"
         android:textSize="20dp"
 
 
@@ -27,7 +27,7 @@
         android:id="@+id/line_settings"
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#A4FF5722"
+        android:background="#5C2D8AB8"
         app:layout_constraintTop_toBottomOf="@id/title_settings">
     </View>
 
@@ -46,105 +46,132 @@
 
         <ImageView
             android:id="@+id/image_startup_delay"
-            android:src="@drawable/delay_measure"
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:src="@drawable/start"
+            android:layout_height="35dp"
+            android:layout_width="35dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
             android:id="@+id/text_startup_delay"
             android:layout_width="270dp"
             android:layout_height="40dp"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_blue"
             android:text="Ожидание 10 секунд, прежде чем начнется измерение"
             android:textColor="#1B1B1B"
-            android:background="#C6C6C6"
             android:textSize="12sp"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:layout_columnWeight="1"/>
-        <Button
-            android:textAlignment="center"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
-            android:id="@+id/button_startup_delay"
-            android:layout_gravity="center"
 
-            android:layout_columnWeight="1"/>
+        <Button
+            android:id="@+id/button_startup_delay"
+            android:layout_width="55dp"
+            android:layout_height="51dp"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:onClick="showDialog"
+            android:text="···"
+
+            android:textAlignment="center" />
 
         <ImageView
+            android:layout_marginTop="10dp"
             android:id="@+id/image_measurement_interval"
-            android:src="@drawable/interval_measure"
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:src="@drawable/measure"
+            android:layout_height="35dp"
+            android:layout_width="35dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
+
+            android:layout_marginTop="10dp"
             android:id="@+id/text_measurement_interval"
             android:layout_width="270dp"
             android:layout_height="40dp"
             android:text="Измерение каждые 15 секунд"
             android:textColor="#1B1B1B"
-            android:background="#C6C6C6"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_blue"
             android:gravity="center_vertical"
             android:textSize="12sp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <Button
+
+            android:layout_marginTop="10dp"
             android:textAlignment="center"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
+            android:layout_width="55dp"
+            android:text="···"
+            android:layout_height="51dp"
             android:id="@+id/button_measurement_interval"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
 
         <ImageView
+
+            android:layout_marginTop="10dp"
             android:id="@+id/image_measurement_duration"
-            android:src="@drawable/stop_measure"
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:src="@drawable/stop"
+            android:layout_height="35dp"
+            android:layout_width="35dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
+
+            android:layout_marginTop="10dp"
             android:id="@+id/text_measurement_duration"
             android:layout_width="270dp"
             android:layout_height="40dp"
             android:text="Измерять, пока не закончится память"
             android:textColor="#1B1B1B"
-            android:background="#C6C6C6"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_blue"
             android:gravity="center_vertical"
             android:textSize="12sp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <Button
+
+            android:layout_marginTop="10dp"
             android:textAlignment="center"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
+            android:layout_width="55dp"
+            android:text="···"
+            android:layout_height="51dp"
             android:id="@+id/button_measurement_duration"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
 
         <ImageView
+
+            android:layout_marginTop="10dp"
             android:id="@+id/image_temperature_limits"
-            android:src="@drawable/temperature"
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:src="@drawable/thermometer"
+            android:layout_height="35dp"
+            android:layout_width="35dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
+
+            android:layout_marginTop="10dp"
             android:id="@+id/text_temperature_limits"
             android:layout_width="270dp"
             android:layout_height="40dp"
             android:text="Границы измерения от 20°С до 35°С"
             android:textColor="#1B1B1B"
-            android:background="#C6C6C6"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_blue"
             android:textSize="12sp"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:layout_columnWeight="1"/>
         <Button
+
+            android:layout_marginTop="10dp"
             android:textAlignment="center"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
+            android:layout_width="55dp"
+            android:text="···"
+            android:layout_height="51dp"
             android:id="@+id/button_temperature_limits"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
@@ -153,6 +180,8 @@
 
 
     <Button
+
+        android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -163,6 +192,8 @@
         app:layout_constraintRight_toLeftOf="@id/reset_configuration"/>
 
     <Button
+
+        android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
