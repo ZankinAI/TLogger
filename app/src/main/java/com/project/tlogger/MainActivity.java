@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.project.tlogger.msg.model.Protocol;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
 
 import androidx.appcompat.app.ActionBar;
@@ -33,6 +34,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.project.tlogger.databinding.ActivityMainBinding;
 import com.project.tlogger.ui.temperature.TemperatureFragment;
+
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity implements onSomeEventListener{
     private NfcAdapter nfcAdapter;
@@ -122,7 +125,8 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         Log.d(TAG, "onNewIntent");
 
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             if (myTag==null)
                 Log.d(TAG, "myTag is null");
@@ -131,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage[] msgs;
             if (rawMsgs!=null){
-                NdefRecord firstRecord = ((NdefMessage)rawMsgs[0]).getRecords()[0];
+                NdefRecord firstRecord = ((NdefMessage)rawMsgs[0]).getRecords()[1];
                 Log.d(TAG, "create first record");
                 byte[] payload = firstRecord.getPayload();
                 int payloadLenght = payload.length;

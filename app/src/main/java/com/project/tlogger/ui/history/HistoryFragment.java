@@ -80,21 +80,21 @@ public class HistoryFragment extends Fragment {
 
     private void setInitialData(){
 
-        states.add(new HistoryState ("NFCID:083535301", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535302", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535303", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535304", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535305", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535306", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535307", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535308", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535309", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535310", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535311", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535312", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535313", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535314", "Запущено", R.drawable.starting_state));
-        states.add(new HistoryState ("NFCID:083535315", "Запущено", R.drawable.starting_state));
+        states.add(new HistoryState ("NFCID:083535301", "Запущено", R.drawable.logo_low_bat));
+        states.add(new HistoryState ("NFCID:083535302", "Запущено", R.drawable.logo_no_space));
+        states.add(new HistoryState ("NFCID:083535303", "Запущено", R.drawable.logo_high_temp));
+        states.add(new HistoryState ("NFCID:083535304", "Запущено", R.drawable.logo_logging_state));
+        states.add(new HistoryState ("NFCID:083535305", "Запущено", R.drawable.logo_low_temp));
+        states.add(new HistoryState ("NFCID:083535306", "Запущено", R.drawable.logo_pristine_state));
+        states.add(new HistoryState ("NFCID:083535307", "Запущено", R.drawable.logo_starting_state));
+        states.add(new HistoryState ("NFCID:083535308", "Запущено", R.drawable.logo_logging_state));
+        states.add(new HistoryState ("NFCID:083535309", "Запущено", R.drawable.logo_logging_state));
+        states.add(new HistoryState ("NFCID:083535310", "Запущено", R.drawable.logo_logging_state));
+        states.add(new HistoryState ("NFCID:083535311", "Запущено", R.drawable.logo_logging_state));
+        states.add(new HistoryState ("NFCID:083535312", "Запущено", R.drawable.logo_starting_state));
+        states.add(new HistoryState ("NFCID:083535313", "Запущено", R.drawable.logo_starting_state));
+        states.add(new HistoryState ("NFCID:083535314", "Запущено", R.drawable.logo_starting_state));
+        states.add(new HistoryState ("NFCID:083535315", "Запущено", R.drawable.logo_starting_state));
     }
 
     @Override

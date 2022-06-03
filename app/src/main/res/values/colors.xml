@@ -10,4 +10,5 @@
     <color name="light_blue">#EB64C2F4</color>
     <color name="item_background">#E95A10FF</color>
     <color name="default_blue">#2D8AB8</color>
+    <color name="bottom_list_item_not_selected">#00D3F0FD</color>
 </resources>
