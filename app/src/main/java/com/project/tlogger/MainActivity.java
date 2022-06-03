@@ -15,11 +15,13 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.project.tlogger.ui.StartMeasurements;
 import com.project.tlogger.msg.model.Protocol;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
 
@@ -37,12 +39,21 @@ import com.project.tlogger.ui.temperature.TemperatureFragment;
 
 import java.nio.charset.StandardCharsets;
 
-public class MainActivity extends AppCompatActivity implements onSomeEventListener{
+
+public class MainActivity extends AppCompatActivity implements onSomeEventListener, StartMeasurements.OnInputListener{
     private NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
     private Tag myTag;
     private ActivityMainBinding binding;
     private final static String TAG = "NFC Debbug";
+    String[] time = {"секунды", "минуты", "часы"};
+    int startMeasurementsTime = 60;
+    int getStartMeasurementsTimeMeasure = 0;
+    private static final String TAG2 = "MainActivity";
+    public int mInput;
+    int[] timeMeasure = {R.plurals.seconds_plural ,R.plurals.minuits_plural, R.plurals.hours_plural};
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,6 +252,31 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         return sb.toString();
     }
 
+    public void showDialog(View v) {
+
+        StartMeasurements dialog = new StartMeasurements();
+
+        Bundle bundle = new Bundle();
+        bundle.putIntArray("", new int[]{startMeasurementsTime, getStartMeasurementsTimeMeasure});
+        dialog.setArguments(bundle);
+
+        dialog.show(getSupportFragmentManager(), "custom");
+    }
+
+
+    @Override
+    public void sendInput(int number, int time) {
+        //Log.d(TAG2, "sendInput: got the input: " + number + " " + time);
+        startMeasurementsTime = number;
+        getStartMeasurementsTimeMeasure = time;
+        setInputToTextView(startMeasurementsTime, getStartMeasurementsTimeMeasure);
+    }
+    private void setInputToTextView(int number, int time)
+    {
+        TextView textView = findViewById(R.id.text_startup_delay);
+        textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+    }
+
 }
 
 class Utils {
@@ -293,5 +329,7 @@ class Utils {
         }
         return result;
     }
+
+
 }
 
