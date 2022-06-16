@@ -43,7 +43,13 @@ public class ResponseHandler {
 
             if (Protocol.tloggerIds.get("GETCONFIG")==header.msgId) {
                 Protocol.TLOGGER_MSG_RESPONSE_GETCONFIG msgResponseGetConfig = GetResponseGetConfig(mimePayload);
-
+                lib.count = msgResponseGetConfig.count;
+                lib.configTime = msgResponseGetConfig.configTime;
+                lib.runningTime = msgResponseGetConfig.runningTime;
+                lib.runningTime = msgResponseGetConfig.runningTime;
+                lib.interval = msgResponseGetConfig.interval;
+                lib.validMinimum = msgResponseGetConfig.validMinimum;
+                lib.validMaximum = msgResponseGetConfig.validMaximum;
 
             }
             if (Protocol.tloggerIds.get("GETVERSION")==header.msgId){
@@ -51,10 +57,15 @@ public class ResponseHandler {
                 lib.apiVersion = getVersionText(msgResponseGetVersion);
             }
 
+            if (Protocol.tloggerIds.get("GETNFCUID") == header.msgId){
+                lib.nfcId = GetResponseGetNfcUid(mimePayload);
+            }
+
             if (Protocol.tloggerIds.get("GETMEASUREMENTS")==header.msgId){
                 Protocol.TLOGGER_MSG_RESPONSE_GETMEASUREMENTS msgResponseGetMeasurements = GetResponseGetMeasurements(mimePayload);
                 lib.measuredData = new short[msgResponseGetMeasurements.count];
                 lib.measuredData = msgResponseGetMeasurements.data;
+                lib.measurementsCount+= msgResponseGetMeasurements.count;
 
             }
         }
@@ -74,6 +85,24 @@ public class ResponseHandler {
         }
 
 
+    }
+
+    private String GetResponseGetNfcUid(Protocol.MimePayload mimePayload){
+        String msgResponseGetnfcid = "";
+        for (int i=0; i<mimePayload.data.length; i++){
+            msgResponseGetnfcid+=byteToHex(mimePayload.data[i]);
+            if (i<mimePayload.data.length-1) msgResponseGetnfcid += ":";
+
+        }
+
+        return msgResponseGetnfcid;
+    }
+
+    private String byteToHex(byte num) {
+        char[] hexDigits = new char[2];
+        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+        hexDigits[1] = Character.forDigit((num & 0xF), 16);
+        return new String(hexDigits);
     }
 
     private Protocol.TLOGGER_MSG_RESPONSE_GETCONFIG GetResponseGetConfig(Protocol.MimePayload mimePayload)

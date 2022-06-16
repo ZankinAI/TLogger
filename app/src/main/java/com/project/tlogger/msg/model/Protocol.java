@@ -22,6 +22,7 @@ public class Protocol {
         tloggerIds.put("GETEVENTS", new Byte((byte)0x5b));
         tloggerIds.put("GETPERIODICDATA", new Byte((byte)0x5e));
         tloggerIds.put("GETVERSION", new Byte((byte)0x02));
+        tloggerIds.put("GETNFCUID", new Byte((byte)0x0A));
     }
 
     public static byte MSG_ID(String msg)

@@ -262,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         byte[] testCmdGetVersion = { 0x46, 0x00, 0x00, 0x00};
         NdefRecord mimCmdGetVersion = NdefRecord.createMime("n/p", testCmdGetVersion);
         NdefMessage ndefMessage = cmdHandler.createCmdGetMeasurements((short)0);
+        msgLib.measurementsCount = 0;
         NdefMessage response;
         try {
             ndef.connect();
