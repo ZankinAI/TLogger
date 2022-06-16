@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:rowCount="4"
         android:columnCount="3"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="20dp"
 
         app:layout_constraintTop_toBottomOf="@+id/line_settings"
         app:layout_constraintLeft_toLeftOf="parent">
@@ -47,8 +47,8 @@
         <ImageView
             android:id="@+id/image_startup_delay"
             android:src="@drawable/start"
-            android:layout_height="35dp"
-            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_width="30dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
@@ -79,8 +79,8 @@
             android:layout_marginTop="10dp"
             android:id="@+id/image_measurement_interval"
             android:src="@drawable/measure"
-            android:layout_height="35dp"
-            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_width="30dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
@@ -113,8 +113,8 @@
             android:layout_marginTop="10dp"
             android:id="@+id/image_measurement_duration"
             android:src="@drawable/stop"
-            android:layout_height="35dp"
-            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_width="30dp"
             android:layout_gravity="center"
             android:layout_columnWeight="1"/>
         <TextView
