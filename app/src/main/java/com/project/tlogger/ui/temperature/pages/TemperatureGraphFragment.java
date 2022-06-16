@@ -24,6 +24,7 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
 
 import java.util.ArrayList;
@@ -44,11 +45,11 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
-        int[] colors = new int[10];
+        int[] colors = new int[MainActivity.msgLib.measuredData.length];
         float[] hsv= new float[3];
-        for (int i=0;i<10;i++){
-            entries.add(new BarEntry(i,i+10));
-            hsv[0]=300-10*i;
+        for (int i = 0; i< MainActivity.msgLib.measuredData.length; i++){
+            entries.add(new BarEntry(i,   (float) (MainActivity.msgLib.measuredData[i]/10.0) ));
+            hsv[0]=300-MainActivity.msgLib.measuredData[i]/10;
             hsv[1]=100;
             hsv[2]=100;
             colors[i]=Color.HSVToColor(hsv);
@@ -89,6 +90,10 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
        return v;
     }
 
+    private static double roundAvoid(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

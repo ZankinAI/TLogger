@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
 
 public class TemperatureFragment extends Fragment {
@@ -31,6 +32,7 @@ public class TemperatureFragment extends Fragment {
         TemperatureAdapter temperatureAdapter = new TemperatureAdapter(getActivity());
         viewPager2.setAdapter(temperatureAdapter);
         viewPager2.setCurrentItem(0);
+
         return view;
     }
 

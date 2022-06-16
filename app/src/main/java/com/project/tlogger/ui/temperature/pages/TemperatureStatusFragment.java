@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
 
 public class TemperatureStatusFragment extends Fragment {
@@ -25,7 +27,19 @@ public class TemperatureStatusFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.temperature_status_fragment, container, false);
+
+
+        View view = inflater.inflate(R.layout.temperature_status_fragment, container, false);
+        TextView textViewStatus = view.findViewById(R.id.temp_info);
+        textViewStatus.setText(MainActivity.msgLib.textStatus);
+
+        TextView textViewApiVersion = view.findViewById(R.id.system_info);
+        textViewApiVersion.setText(MainActivity.msgLib.apiVersion);
+
+        TextView textViewMimeType = view.findViewById(R.id.mime_type);
+        textViewMimeType.setText(MainActivity.msgLib.mimeType);
+
+        return view;
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
 import android.nfc.tech.MifareUltralight;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -21,6 +22,9 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.project.tlogger.msg.CommandHandler;
+import com.project.tlogger.msg.Lib;
+import com.project.tlogger.msg.ResponseHandler;
 import com.project.tlogger.ui.StartMeasurements;
 import com.project.tlogger.msg.model.Protocol;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
@@ -41,8 +45,12 @@ import java.nio.charset.StandardCharsets;
 
 
 public class MainActivity extends AppCompatActivity implements onSomeEventListener, StartMeasurements.OnInputListener{
+    public static Lib msgLib;
+    Tag tag;
     private NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
+    private Protocol protocol;
+    public NavController navController;
     private Tag myTag;
     private ActivityMainBinding binding;
     private final static String TAG = "NFC Debbug";
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     private static final String TAG2 = "MainActivity";
     public int mInput;
     int[] timeMeasure = {R.plurals.seconds_plural ,R.plurals.minuits_plural, R.plurals.hours_plural};
+    private  CommandHandler cmdHandler;
 
 
     @Override
@@ -59,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         super.onCreate(savedInstanceState);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        msgLib = new Lib();
+        cmdHandler = new CommandHandler(msgLib);
 
 
         Log.d(TAG, "onStart");
@@ -97,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 R.id.navigation_temperature, R.id.navigation_history,
                 R.id.navigation_settings, R.id.navigation_about)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
@@ -112,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         ft.replace(R.id.nav_host_fragment_activity_main, temperatureFragment, "temperatureFragment");
         ft.addToBackStack(null);
         ft.commit();*/
+        msgLib.flagOpenFragmentFromHistory = true;
         Intent intent = new Intent(this, HistoryActivity.class);
         startActivity(intent);
 
@@ -120,7 +133,11 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     @Override
     protected void onResume() {
         super.onResume();
+        MainActivity.msgLib.flagOpenFragmentFromHistory = false;
+
+
         Log.d(TAG, "on Resume");
+
         if (nfcAdapter!=null)
             if (!nfcAdapter.isEnabled())
                 Log.d(TAG, "not Enable NFS");
@@ -135,8 +152,65 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         setIntent(intent);
         Log.d(TAG, "onNewIntent");
 
+        msgLib.textStatus="";
+        msgLib.flagTloggerConnected = true;
+
+        Protocol.Direction direction = Protocol.Direction.Incoming;
+       /* byte[] testPayload = {0x48, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x10,
+                (byte)0x8E, 0x62, 0x0f, 0x00, 0x0A, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, (byte)0xC8, 0x00, 0x5e,0x01,
+                (byte) 0xff, 0x7f, 0x00, (byte)0x80, 0x00, 0x00, (byte)0x97,0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,0x00,
+                0x00, 0x00
+        };
+
+        byte[] testGetVersion = { 0x02, 0x01, 0x00, 0x00, (byte)0xFB, 0x07, 0x13, 0x00,
+                0x06, 0x00, 0x01, 0x00, 0x20, 0x00, 0x31, 0x4E};
+
+        byte[] testText1 = {0x02, 0x65, 0x6E, 0x53, 0x74, 0x6F, 0x70, 0x70,
+                0x65, 0x64, 0x2E, 0x20, 0x20, 0x20, 0x20, 0x20,
+                0x30, 0x20, 0x73, 0x61, 0x6D, 0x70, 0x6C, 0x65,
+                0x73, 0x20, 0x6C, 0x6F, 0x67, 0x67, 0x65, 0x64,
+                0x2E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00
+        };
 
 
+        byte[] testText2 = {0x02, 0x65, 0x6E, 0x41, 0x4C, 0x45, 0x52, 0x54,
+                0x3A, 0x20, 0x62, 0x61, 0x74, 0x74, 0x65, 0x72,
+                0x79, 0x20, 0x69, 0x73, 0x20, 0x65, 0x6D, 0x70,
+                0x74, 0x79, 0x2E, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00
+        };
+
+        byte[] testText3 = {0x02, 0x65, 0x6E, 0x43, 0x75, 0x72, 0x72, 0x65,
+                0x6E, 0x74, 0x20, 0x74, 0x65, 0x6D, 0x70, 0x65,
+                0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x3A, 0x20,
+                0x20, 0x32, 0x37, 0x2E, 0x39, 0x43, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        };
+
+
+
+        NdefRecord mimeRecord = NdefRecord.createMime("n/p", testPayload);
+        NdefRecord mimeRecordGetVersion = NdefRecord.createMime("n/p", testGetVersion);
+        NdefRecord ndefText1 = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, testText1);
+        ResponseHandler rsptext1 = new ResponseHandler(msgLib, ndefText1);
+        NdefRecord ndefText2 = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, testText2);
+        ResponseHandler rsptext2 = new ResponseHandler(msgLib, ndefText2);
+        NdefRecord ndefText3 = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, testText3);
+        ResponseHandler rsptext3 = new ResponseHandler(msgLib, ndefText3);
+        ResponseHandler rsp = new ResponseHandler(msgLib, mimeRecord);
+        ResponseHandler rsp1 = new ResponseHandler(msgLib, mimeRecordGetVersion);*/
+        ResponseHandler rsp;
+        Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
+        navController.navigate( R.id.navigation_temperature);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             if (myTag==null)
@@ -145,8 +219,21 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 Log.d(TAG, "myTag is not null");
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage[] msgs;
+
+
+
             if (rawMsgs!=null){
-                NdefRecord firstRecord = ((NdefMessage)rawMsgs[0]).getRecords()[1];
+
+                NdefMessage msg = (NdefMessage)rawMsgs[0];
+                NdefRecord[] records = msg.getRecords();
+
+                for(NdefRecord ndefRecord : records ){
+
+                    Log.d(TAG, "read the record");
+                    rsp = new ResponseHandler(msgLib, ndefRecord);
+                }
+
+                /*NdefRecord firstRecord = ((NdefMessage)rawMsgs[0]).getRecords()[1];
                 Log.d(TAG, "create first record");
                 byte[] payload = firstRecord.getPayload();
                 int payloadLenght = payload.length;
@@ -156,12 +243,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 System.arraycopy(payload, 1+ langLenght, text, 0, textLenght);
                 Toast.makeText(this, new String(text), Toast.LENGTH_SHORT).show();
 
-                Log.d(TAG, new String(text));
+                Log.d(TAG, new String(text));*/
 
             }
             else {
-
-
                 byte[] empty = new byte[0];
                 byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
                 byte[] payload = dumpTagData(myTag).getBytes();
@@ -169,12 +254,33 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 NdefMessage msg = new NdefMessage(new NdefRecord[] {record});
                 msgs = new NdefMessage[] {msg};
                 Log.d(TAG, "msg null but cool");
-
-
             }
 
 
         }
+
+        byte[] testCmdGetVersion = { 0x46, 0x00, 0x00, 0x00};
+        NdefRecord mimCmdGetVersion = NdefRecord.createMime("n/p", testCmdGetVersion);
+        NdefMessage ndefMessage = cmdHandler.createCmdGetMeasurements((short)0);
+        NdefMessage response;
+        try {
+            ndef.connect();
+            if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
+            ndef.writeNdefMessage(ndefMessage);
+
+            response = ndef.getNdefMessage();
+            NdefRecord[] records1 = response.getRecords();
+            rsp = new ResponseHandler(msgLib, records1[0]);
+            Log.d(TAG, "write msg");
+            ndef.close();
+
+        }
+        catch (Exception e){
+            Log.d(TAG, "no connect");
+
+        }
+
+
     }
 
     private String dumpTagData(Tag tag) {
@@ -271,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         getStartMeasurementsTimeMeasure = time;
         setInputToTextView(startMeasurementsTime, getStartMeasurementsTimeMeasure);
     }
+
     private void setInputToTextView(int number, int time)
     {
         TextView textView = findViewById(R.id.text_startup_delay);
