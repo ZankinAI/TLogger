@@ -3,7 +3,9 @@ package com.project.tlogger.msg;
 import android.nfc.NdefRecord;
 import android.os.Debug;
 
+import com.project.tlogger.msg.model.MeasurementStatusModel;
 import com.project.tlogger.msg.model.Protocol;
+import com.project.tlogger.msg.model.TemperatureStatusModel;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -12,8 +14,9 @@ import java.util.Date;
 import javax.xml.transform.sax.SAXResult;
 
 public class ResponseHandler {
-
+    Lib _lib;
     public ResponseHandler(Lib lib, NdefRecord ndefRecord){
+        this._lib = lib;
 
         if (ndefRecord.getTnf()==NdefRecord.TNF_MIME_MEDIA)
         {
@@ -49,7 +52,12 @@ public class ResponseHandler {
                 lib.runningTime = msgResponseGetConfig.runningTime;
                 lib.interval = msgResponseGetConfig.interval;
                 lib.validMinimum = msgResponseGetConfig.validMinimum;
+                parsingEvent(msgResponseGetConfig.status);
                 lib.validMaximum = msgResponseGetConfig.validMaximum;
+                lib.attainedMinimunm = msgResponseGetConfig.attainedMinimum;
+                lib.attainedMaximum = msgResponseGetConfig.attainedMaximum;
+
+
 
             }
             if (Protocol.tloggerIds.get("GETVERSION")==header.msgId){
@@ -86,6 +94,7 @@ public class ResponseHandler {
 
 
     }
+
 
     private String GetResponseGetNfcUid(Protocol.MimePayload mimePayload){
         String msgResponseGetnfcid = "";
@@ -200,6 +209,50 @@ public class ResponseHandler {
         }
 
         return result;
+
+
+    }
+
+    void parsingEvent( int status){
+        int result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_PRISTINE.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_PRISTINE.getValue()) _lib.measurementStatus.measurement = MeasurementStatusModel.Measurement.NotConfigured;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_CONFIGURED.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_CONFIGURED.getValue()) _lib.measurementStatus.measurement = MeasurementStatusModel.Measurement.Configured;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_STARTING.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_STARTING.getValue()) _lib.measurementStatus.measurement = MeasurementStatusModel.Measurement.Starting;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_LOGGING.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_LOGGING.getValue()) _lib.measurementStatus.measurement = MeasurementStatusModel.Measurement.Logging;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_STOPPED.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_STOPPED.getValue()) _lib.measurementStatus.measurement = MeasurementStatusModel.Measurement.Stopped;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_STOPPED.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_STOPPED.getValue()) _lib.measurementStatus.measurement = MeasurementStatusModel.Measurement.Stopped;
+
+
+        _lib.measurementStatus.failure = MeasurementStatusModel.Failure.NoFailure;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_FULL.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_FULL.getValue()) _lib.measurementStatus.failure = MeasurementStatusModel.Failure.Full;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_BOD.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_BOD.getValue()) _lib.measurementStatus.failure = MeasurementStatusModel.Failure.Bod;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_EXPIRED.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_EXPIRED.getValue()) _lib.measurementStatus.failure = MeasurementStatusModel.Failure.Expired;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_LOGGING.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_LOGGING.getValue()) _lib.temperatureStatus.temperature = TemperatureStatusModel.Temperature.Normal;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_TEMPERATURE_TOO_LOW.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_TEMPERATURE_TOO_LOW.getValue()) _lib.temperatureStatus.temperature = TemperatureStatusModel.Temperature.Low;
+
+        result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_TEMPERATURE_TOO_HIGH.getValue();
+        if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_TEMPERATURE_TOO_HIGH.getValue()) _lib.temperatureStatus.temperature = TemperatureStatusModel.Temperature.High;
+
 
 
     }

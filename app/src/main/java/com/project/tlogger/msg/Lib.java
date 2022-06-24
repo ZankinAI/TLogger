@@ -1,6 +1,8 @@
 package com.project.tlogger.msg;
 
+import com.project.tlogger.msg.model.MeasurementStatusModel;
 import com.project.tlogger.msg.model.Protocol;
+import com.project.tlogger.msg.model.TemperatureStatusModel;
 
 public class Lib {
 
@@ -24,6 +26,11 @@ public class Lib {
     public short interval;
     public short validMinimum;
     public short validMaximum;
+    public short attainedMinimunm;
+    public short attainedMaximum;
+
+    public MeasurementStatusModel measurementStatus;
+    public TemperatureStatusModel temperatureStatus;
 
 
     public Lib(){
@@ -39,6 +46,8 @@ public class Lib {
         this.interval = 0;
         this.validMinimum = 0;
         this.validMaximum = 0;
+        this.measurementStatus = new MeasurementStatusModel();
+        this.temperatureStatus = new TemperatureStatusModel();
 
     }
 

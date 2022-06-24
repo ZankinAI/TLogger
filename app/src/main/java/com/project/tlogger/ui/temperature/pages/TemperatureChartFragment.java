@@ -121,7 +121,7 @@ public class TemperatureChartFragment extends Fragment {
 
         LocalDateTime dateTime = LocalDateTime.ofEpochSecond(MainActivity.msgLib.configTime+10800, 0, ZoneOffset.UTC);
         TextView textConfigurationTime = view.findViewById(R.id.configuration_time_text);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = dateTime.format(formatter);
         textConfigurationTime.setText(formattedDateTime);
 
@@ -155,9 +155,131 @@ public class TemperatureChartFragment extends Fragment {
         String html = "<html><head><title>Title</title></head><body>This is random text.</body></html>";
         //browserChart.loadData(htmlContent, "text/html", "UTF-8");
         browserChart.loadUrl("file:///android_asset/chart1.html");
-        browserChart.loadDataWithBaseURL("file:///android_asset/Js/", htmlContent, "text/html", "UTF-8", null);
+        String htmlText = createChartHtml((float)(MainActivity.msgLib.validMinimum/10.0) , (float)(MainActivity.msgLib.validMaximum/10.0), (float)(MainActivity.msgLib.attainedMinimunm/10.0),  (float)(MainActivity.msgLib.attainedMaximum/10.0));
+        browserChart.loadDataWithBaseURL("file:///android_asset/Js/", htmlText, "text/html", "UTF-8", null);
         //browserChart.loadData(htmlContent, "text/html", "UTF-8");
         return view;
+    }
+
+    private String createChartHtml(float validMin, float validMax, float attainedMin, float attainedMax){
+        final float  MinLimit = -40.0f;
+        final float MaxLimit = 85.0f;
+
+        float minLimit = MinLimit;
+        float maxLimit = MaxLimit;
+
+        minLimit = validMin;
+        maxLimit = validMax;
+
+        float configMin = validMin;
+        float configMax = validMax;
+        float recMin = attainedMin;
+        float recMax = attainedMax;
+
+        if (recMin < configMin) minLimit = recMin;
+        if (recMax > configMax) maxLimit = recMax;
+
+        minLimit -= 5.0f;
+        maxLimit += 5.0f;
+
+        if (minLimit < MinLimit) minLimit = MinLimit;
+        if (maxLimit > MaxLimit) maxLimit = MaxLimit;
+
+
+
+        String htmlChart =  "<html>\n" +
+                "<head>\n" +
+                "<script type=\"text/javascript\" src=\"fusioncharts.js\"></script>" +
+                "<meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1'/>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<div id='container'>Preparing graph!...</div>\n" +
+                "<script type='text/javascript'>\n" +
+                "new FusionCharts({\n" +
+                "type: 'hlineargauge',\n" +
+                "renderAt: 'container',\n" +
+                "width: '100%',\n" +
+                "height: '100%',\n" +
+                "dataFormat: 'json',\n" +
+                "dataSource: {\n" +
+                "\"chart\": {\n" +
+                "\"theme\": \"fint\",\n" +
+                "\"bgColor\": \"#ffffff\",\n" +
+                "\"showBorder\": \"0\",\n" +
+                "\"lowerLimit\": \""+String.valueOf(minLimit)+"\",\n" +
+                "\"upperLimit\": \""+String.valueOf(maxLimit)+"\",\n" +
+                "\"chartBottomMargin\": \"0\",\n" +
+                "\"chartTopMargin\": \"0\",\n" +
+                "\"valueFontSize\": \"12\",\n" +
+                "\"valueFontBold\": \"0\",\n" +
+                "\"gaugeFillMix\": \"{{light-10}},{{light-70}},{{dark-10}}\",\n" +
+                "\"gaugeFillRatio\": \"40,20,40\",\n" +
+                "\"showTickMarks\": \"1\",\n" +
+                "\"showTickValues\": \"1\",\n" +
+                "\"pointerOnTop\": \"1\",\n" +
+                "\"valueAbovePointer\": \"0\",\n" +
+                "\"majorTMNumber\": \"3\",\n" +
+                "\"placeValuesInside\": \"1\",\n" +
+                "},\n" +
+                "\"colorRange\": {\n" +
+                "\"color\": [{\n" +
+                "\"minValue\": \""+String.valueOf(minLimit)+"\",\n"+
+                "\"maxValue\": \""+String.valueOf(configMin)+"\",\n"+
+                "\"label\": \"Низкая\",\n"+
+                "\"code\": \"#f59842\",\n"+
+                "},{\n"+
+                "\"minValue\": \""+String.valueOf(configMin)+"\",\n"+
+                "\"maxValue\": \""+String.valueOf(configMax)+"\",\n"+
+                "\"label\": \"Допустимая\",\n"+
+                "\"code\": \"#4290f5\",\n"+
+                "},{\n"+
+                "\"minValue\": \""+String.valueOf(configMax)+"\",\n"+
+                "\"maxValue\": \""+String.valueOf(maxLimit)+"\",\n"+
+                "\"label\": \"Высокая\",\n"+
+                "\"code\": \"#f59842\",\n"+
+                "}]\n"+
+                "},\n" +
+                "\"pointers\": {\n" +
+                "\"pointer\": [\n"+
+                "{\"value\": \""+String.valueOf(recMin)+"\",},\n"+
+                "{\"value\": \""+String.valueOf(recMax)+"\",},\n"+
+                "]},\n" +
+                "\"trendPoints\": {\n" +
+                "\"point\": [\n" +
+                "{\n"+
+                "\"startValue\": \""+String.valueOf(recMin)+"\",\n"+
+                "\"color\": \"#dddddd\",\n" +
+                "\"dashed\": \"1\",\n" +
+                "\"dashlen\": \"3\",\n" +
+                "\"dashgap\": \"3\",\n" +
+                "\"thickness\": \"2\",\n" +
+                "\"useMarker\":\"1\",\n" +
+                "\"showOnTop\":\"0\",\n" +
+                "},\n" +
+                "{\n"+
+                "\"startValue\": \""+String.valueOf(recMax)+"\",\n"+
+                "\"color\": \"#dddddd\",\n" +
+                "\"dashed\": \"1\",\n" +
+                "\"dashlen\": \"3\",\n" +
+                "\"dashgap\": \"3\",\n" +
+                "\"thickness\": \"2\",\n" +
+                "\"useMarker\":\"1\",\n" +
+                "\"showOnTop\":\"0\",\n" +
+                "},\n" +
+                "{\n"+
+                "\"startValue\": \""+String.valueOf(recMin)+"\",\n" +
+                "\"endValue\": \""+String.valueOf(recMax)+"\",\n" +
+                "\"displayValue\": \" \",\n" +
+                "\"alpha\": \"40\"" +
+                "}\n" +
+                "]},\n"+
+                "}\n" +
+                "}).render();\n" +
+                "</script>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        return htmlChart;
     }
 
     @Override
@@ -167,26 +289,6 @@ public class TemperatureChartFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
-    private void saveHtmlFile() {
 
-        String path = "file:///android_asset";
-        String fileName = "chartTest.html";
-
-        File file = new File(path, fileName);
-        String html = "<html><head><title>Title</title></head><body>This is random text.</body></html>";
-
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            byte[] data = html.getBytes();
-            out.write(data);
-            out.close();
-            Log.e(TAG, "File Save : " + file.getPath());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.e(TAG, "file not found");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 }

@@ -25,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.project.tlogger.msg.CommandHandler;
 import com.project.tlogger.msg.Lib;
 import com.project.tlogger.msg.ResponseHandler;
+import com.project.tlogger.msg.model.MeasurementStatusModel;
 import com.project.tlogger.ui.StartMeasurements;
 import com.project.tlogger.msg.model.Protocol;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         msgLib = new Lib();
+
         cmdHandler = new CommandHandler(msgLib);
 
 
