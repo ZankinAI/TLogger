@@ -17,9 +17,9 @@ public class Lib {
     public short count;
     public byte measurementsCount;
 
+    public boolean setConfigurationFlag = false;
+
     public short[] measuredData;
-
-
 
     public boolean flagTloggerConnected;
     public boolean flagOpenFragmentFromHistory;
@@ -32,8 +32,10 @@ public class Lib {
     public MeasurementStatusModel measurementStatus;
     public TemperatureStatusModel temperatureStatus;
 
+    public Protocol.TLOGGER_MSG_CMD_SETCONFIG cmdSetConfig;
 
     public Lib(){
+        this.cmdSetConfig = new Protocol.TLOGGER_MSG_CMD_SETCONFIG();
         this.protocol = new Protocol();
         this.textStatus = " ";
         this.apiVersion = "n.a.";
@@ -48,8 +50,6 @@ public class Lib {
         this.validMaximum = 0;
         this.measurementStatus = new MeasurementStatusModel();
         this.temperatureStatus = new TemperatureStatusModel();
-
     }
-
-
 }
+
