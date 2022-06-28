@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_time"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gradient_background"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:minWidth="260dp"
+    android:theme="@style/Theme.Bottom">
+
+    <TextView
+        android:id="@+id/nfc_start_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:fontFamily="@font/roboto_bold"
+        android:gravity="center"
+        android:text="Режим конфигурации запущен..."
+        android:textColor="@color/default_blue"
+        android:textSize="16sp" />
+
+
+    <Button
+        android:id="@+id/nfc_start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nfc_start_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"
+        android:text="ОТМЕНА" />
+</RelativeLayout>
+

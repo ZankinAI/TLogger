@@ -3,7 +3,6 @@ package com.project.tlogger;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -22,16 +21,20 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.project.tlogger.ui.EndMeasurements;
+import com.project.tlogger.ui.IntervalOfMeasurements;
 import com.project.tlogger.msg.CommandHandler;
 import com.project.tlogger.msg.Lib;
 import com.project.tlogger.msg.ResponseHandler;
-import com.project.tlogger.msg.model.MeasurementStatusModel;
+import com.project.tlogger.ui.NFCStart;
 import com.project.tlogger.ui.StartMeasurements;
 import com.project.tlogger.msg.model.Protocol;
+import com.project.tlogger.ui.TemperatureRange;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -40,13 +43,14 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.project.tlogger.databinding.ActivityMainBinding;
-import com.project.tlogger.ui.temperature.TemperatureFragment;
 
-import java.nio.charset.StandardCharsets;
+import org.w3c.dom.Text;
 
+import javax.sql.StatementEvent;
 
-public class MainActivity extends AppCompatActivity implements onSomeEventListener, StartMeasurements.OnInputListener{
+public class MainActivity extends AppCompatActivity implements onSomeEventListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
     public static Lib msgLib;
+    boolean flag = false;
     Tag tag;
     private NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
@@ -57,9 +61,17 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     private final static String TAG = "NFC Debbug";
     String[] time = {"секунды", "минуты", "часы"};
     int startMeasurementsTime = 60;
-    int getStartMeasurementsTimeMeasure = 0;
+    int startMeasurementsMeasure = 0;
+    int intervalOfMeasurmentsTime = 15;
+    int intervalOfMeasurmentsMeasure = 0;
+    int endMeasurementsTime = 0;
+    int endMeasurementsMeasure = 0;
+    int lower_range = 20;
+    int upper_range = 35;
     private static final String TAG2 = "MainActivity";
     public int mInput;
+    public NFCStart nfcDialog;
+    public NFCStart nfcDialogEvent;
     int[] timeMeasure = {R.plurals.seconds_plural ,R.plurals.minuits_plural, R.plurals.hours_plural};
     private  CommandHandler cmdHandler;
 
@@ -156,6 +168,45 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
         msgLib.textStatus="";
         msgLib.flagTloggerConnected = true;
+
+        /*TextView textView = findViewById(R.id.nfc_start_text);
+        textView.setText("hello");*/
+
+        /*NFCStart myFragment = new NFCStart();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.dialog_time, myFragment, "testfragment");
+        fragmentTransaction.commit();*/
+
+/*        TextView textView = (TextView) findViewById(R.id.nfc_start_text);
+        if(textView != null)
+            Log.d("mytag", textView.toString());*/
+        if( nfcDialog!=null) {
+            //if (nfcDialog.isVisible()) {
+                nfcDialog.dismiss();
+            //}
+        }
+
+        if(nfcDialogEvent!=null)
+        {
+            nfcDialogEvent.dismiss();
+        }
+
+        nfcDialogEvent = new NFCStart();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("", "Hello");
+        nfcDialogEvent.setArguments(bundle);
+
+        nfcDialogEvent.show(getSupportFragmentManager(), "custom");
+
+        /*NFCStart myFragment1 = (NFCStart) getSupportFragmentManager().findFragmentByTag("testfragment");
+        if (myFragment!=null){
+            Log.d("mytag", "fragment!=null");
+            myFragment.setText("dasd");
+        }else {
+            Log.d("mytag", "fragment=null");
+        }*/
 
         Protocol.Direction direction = Protocol.Direction.Incoming;
        /* byte[] testPayload = {0x48, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x10,
@@ -264,13 +315,14 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         byte[] testCmdGetVersion = { 0x46, 0x00, 0x00, 0x00};
         NdefRecord mimCmdGetVersion = NdefRecord.createMime("n/p", testCmdGetVersion);
         NdefMessage ndefMessage = cmdHandler.createCmdGetMeasurements((short)0);
+        NdefMessage ndefMessageSetConfig = cmdHandler.createCmdSetConfig(msgLib.cmdSetConfig);
         msgLib.measurementsCount = 0;
         NdefMessage response;
         try {
             ndef.connect();
             if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
             ndef.writeNdefMessage(ndefMessage);
-
+            //ndef.writeNdefMessage(ndefMessageSetConfig);
             response = ndef.getNdefMessage();
             NdefRecord[] records1 = response.getRecords();
             rsp = new ResponseHandler(msgLib, records1[0]);
@@ -361,30 +413,191 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         return sb.toString();
     }
 
-    public void showDialog(View v) {
+    public void showDialogStartMeasurements(View v) {
 
         StartMeasurements dialog = new StartMeasurements();
 
         Bundle bundle = new Bundle();
-        bundle.putIntArray("", new int[]{startMeasurementsTime, getStartMeasurementsTimeMeasure});
+        bundle.putIntArray("", new int[]{startMeasurementsTime, startMeasurementsMeasure});
         dialog.setArguments(bundle);
 
         dialog.show(getSupportFragmentManager(), "custom");
     }
 
+    public void showDialogIntervalOfMeasurements(View v) {
 
-    @Override
-    public void sendInput(int number, int time) {
-        //Log.d(TAG2, "sendInput: got the input: " + number + " " + time);
-        startMeasurementsTime = number;
-        getStartMeasurementsTimeMeasure = time;
-        setInputToTextView(startMeasurementsTime, getStartMeasurementsTimeMeasure);
+        IntervalOfMeasurements dialog = new IntervalOfMeasurements();
+
+        Bundle bundle = new Bundle();
+        bundle.putIntArray("", new int[]{intervalOfMeasurmentsTime, intervalOfMeasurmentsMeasure});
+        dialog.setArguments(bundle);
+
+        dialog.show(getSupportFragmentManager(), "custom");
     }
 
-    private void setInputToTextView(int number, int time)
+    public void showDialogEndMeasurements(View v) {
+
+        EndMeasurements dialog = new EndMeasurements();
+
+        Bundle bundle = new Bundle();
+        bundle.putIntArray("", new int[]{endMeasurementsTime, endMeasurementsMeasure});
+        dialog.setArguments(bundle);
+
+        dialog.show(getSupportFragmentManager(), "custom");
+    }
+
+    public void showDialogTemperatureRange(View v) {
+
+        TemperatureRange dialog = new TemperatureRange();
+
+        Bundle bundle = new Bundle();
+        bundle.putIntArray("", new int[]{lower_range, upper_range});
+        dialog.setArguments(bundle);
+
+        dialog.show(getSupportFragmentManager(), "custom");
+    }
+
+    public void setConfiguration(View v){
+        nfcDialog = new NFCStart();
+        nfcDialog.show(getSupportFragmentManager(), "custom");
+
+        /*while (true)
+        {
+            if (flag) break;;
+        }*/
+    }
+
+    public void resetTag(View v){
+
+    }
+
+    @Override
+    public void sendInput(int dialogId, int number, int time) {
+        //Log.d(TAG2, "sendInput: got the input: " + number + " " + time);
+        switch (dialogId){
+            case 0:
+                startMeasurementsTime = number;
+                startMeasurementsMeasure = time;
+                break;
+            case 1:
+                intervalOfMeasurmentsTime = number;
+                intervalOfMeasurmentsMeasure = time;
+                break;
+            case 2:
+                endMeasurementsTime = number;
+                endMeasurementsMeasure = time;
+                break;
+            case 3:
+                lower_range = number;
+                upper_range = time;
+                break;
+        }
+        setInputToTextView(dialogId, number, time);
+    }
+
+
+    private void setInputToTextView(int dialogId, int number, int time)
     {
-        TextView textView = findViewById(R.id.text_startup_delay);
-        textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+        //TextView [] textView = {findViewById(R.id.text_startup_delay), findViewById(R.id.text_measurement_interval), findViewById(R.id.text_measurement_interval)};
+        //ПРОВЕРИТЬ!!!
+        TextView textView;
+        switch (dialogId) {
+            case 0:
+                textView = findViewById(R.id.text_startup_delay);
+                switch (time) {
+                    case 0:
+                        if (number == 0)
+                        {textView.setText("Начать измерения немедленно");}
+                        else if (number <= 60)
+                        {textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));}
+                        else
+                        {textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
+                        break;
+                    case 1:
+                        if (number == 0)
+                        {textView.setText("Начать измерения немедленно");}
+                        else if (number <= 60)
+                            textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        else
+                            textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                        break;
+                    case 2:
+                        if (number == 0)
+                        {textView.setText("Начать измерения немедленно");}
+                        else textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        break;
+                    case 3:
+                        textView.setText("Начать измерения немедленно");
+                        startMeasurementsMeasure = 0;
+                        break;
+                }
+                break;
+            case 1:
+                textView = findViewById(R.id.text_measurement_interval);
+                switch (time) {
+                    case 0:
+                        if (number == 0)
+                        {textView.setText("Периодичность измерений: 1 секунда");}
+                        else if (number <= 60)
+                        {textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[time], number, number));}
+                        else
+                        {textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
+                        break;
+                    case 1:
+                        if (number == 0)
+                        {textView.setText("Периодичность измерений: 1 секунда");}
+                        else if (number <= 60)
+                            textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        else
+                            textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                        break;
+                    case 2:
+                        if (number == 0)
+                        {textView.setText("Периодичность измерений: 1 секунда");}
+                        else textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        break;
+                    case 3:
+                        textView.setText("Начать измерения немедленно");
+                        intervalOfMeasurmentsMeasure = 0;
+                        break;
+                }
+                break;
+            case 2:
+                textView = findViewById(R.id.text_measurement_duration);
+                switch (time) {
+                    case 0:
+                        if (number == 0)
+                        {textView.setText("Измерять, пока не закончится память");}
+                        else if (number <= 60)
+                        {textView.setText("Продолжать измерения: " + getResources().getQuantityString(timeMeasure[time], number, number));}
+                        else
+                        {textView.setText("Продолжать измерения: " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
+                        break;
+                    case 1:
+                        if (number == 0)
+                        {textView.setText("Измерять, пока не закончится память");}
+                        else if (number <= 60)
+                            textView.setText("Продолжать измерения: " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        else
+                            textView.setText("Продолжать измеренияПериодичность измерений: " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                        break;
+                    case 2:
+                        if (number == 0)
+                        {textView.setText("Измерять, пока не закончится память");}
+                        else textView.setText("Продолжать измерения " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        break;
+                    case 3:
+                        textView.setText("Измерять, пока не закончится память");
+                        endMeasurementsMeasure = 0;
+                        break;
+                }
+                break;
+            case 3:
+                textView = findViewById(R.id.text_temperature_limits);
+                textView.setText("Границы измерения: от " + number + " °C до " + time + " °C");
+                break;
+
+        }
     }
 
 }
@@ -439,7 +652,5 @@ class Utils {
         }
         return result;
     }
-
-
 }
 

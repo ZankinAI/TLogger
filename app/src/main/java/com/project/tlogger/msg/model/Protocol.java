@@ -173,11 +173,18 @@ public class Protocol {
 
     public static class TLOGGER_MSG_CMD_SETCONFIG{
         public int currentTime;
-        public short interval;
-        public int startDelay;
-        public int runningTime;
-        public short validMinimum;
-        public short validMaximum;
+
+        public int interval=3;
+        public int intervalMeasure=0;
+
+        public int startDelay=10;
+        public int startDelayMeasure=0;
+
+        public int runningTime=40;
+        public int runningTimeMeasure=0;
+
+        public int validMinimum = 20;
+        public int validMaximum = 35;
 
         public TLOGGER_MSG_CMD_SETCONFIG(){};
 
