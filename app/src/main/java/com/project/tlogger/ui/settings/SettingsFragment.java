@@ -161,7 +161,7 @@ public class SettingsFragment extends Fragment {
 
         int lower_range = MainActivity.msgLib.cmdSetConfig.validMinimum;
         int upper_range = MainActivity.msgLib.cmdSetConfig.validMaximum;
-        textTemperatureRange.setText("Границы измерения: от " + lower_range + " °C до " + upper_range + " °C");
+        textTemperatureRange.setText("Границы измерения: от " + lower_range/10 + " °C до " + upper_range/10 + " °C");
 
 
 

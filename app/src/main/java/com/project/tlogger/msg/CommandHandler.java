@@ -55,4 +55,13 @@ public class CommandHandler{
         return new NdefMessage(mimeCmdGetMeasurements);
     }
 
+    public NdefMessage createCmdStart(){
+        byte[] payload = new byte[2];
+        payload[0] = Protocol.tloggerIds.get("START");
+        payload[1] = Protocol.Direction.Outgoing.getValue();
+
+        NdefRecord mimeCmdGetMeasurements = NdefRecord.createMime("n/p", payload);
+        return new NdefMessage(mimeCmdGetMeasurements);
+    }
+
 }

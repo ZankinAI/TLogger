@@ -6,6 +6,7 @@ import android.os.Debug;
 import com.project.tlogger.msg.model.MeasurementStatusModel;
 import com.project.tlogger.msg.model.Protocol;
 import com.project.tlogger.msg.model.TemperatureStatusModel;
+import com.project.tlogger.msg.model.Utils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -42,17 +43,25 @@ public class ResponseHandler {
             mimePayload.header = header;
             mimePayload.data = new byte[payload.length-2];
             System.arraycopy(payload,2,mimePayload.data,0,payload.length-2);
+            int k=0;
             //Protocol.TLOGGER_MSG_RESPONSE_GETCONFIG msgResponseGetconfig = GetResponseGetConfig(mimePayload);
 
             if (Protocol.tloggerIds.get("GETCONFIG")==header.msgId) {
                 Protocol.TLOGGER_MSG_RESPONSE_GETCONFIG msgResponseGetConfig = GetResponseGetConfig(mimePayload);
+                lib.rspGetConfig = msgResponseGetConfig;
+                lib.storeData.responseConfigData = msgResponseGetConfig;
                 lib.count = msgResponseGetConfig.count;
                 lib.configTime = msgResponseGetConfig.configTime;
                 lib.runningTime = msgResponseGetConfig.runningTime;
                 lib.runningTime = msgResponseGetConfig.runningTime;
                 lib.interval = msgResponseGetConfig.interval;
                 lib.validMinimum = msgResponseGetConfig.validMinimum;
-                parsingEvent(msgResponseGetConfig.status);
+                //parsingEvent(msgResponseGetConfig.status);
+
+                Object[] parsedStat = Utils.parsingEvent(msgResponseGetConfig.status);
+                lib.measurementStatus.measurement = (MeasurementStatusModel.Measurement) parsedStat[0];
+                lib.measurementStatus.failure = (MeasurementStatusModel.Failure) parsedStat[1];
+                lib.temperatureStatus.temperature = (TemperatureStatusModel.Temperature) parsedStat[2];
                 lib.validMaximum = msgResponseGetConfig.validMaximum;
                 lib.attainedMinimunm = msgResponseGetConfig.attainedMinimum;
                 lib.attainedMaximum = msgResponseGetConfig.attainedMaximum;
@@ -63,17 +72,25 @@ public class ResponseHandler {
             if (Protocol.tloggerIds.get("GETVERSION")==header.msgId){
                 Protocol.MSG_RESPONSE_GETVERSION msgResponseGetVersion = GetResponseGetVersion(mimePayload);
                 lib.apiVersion = getVersionText(msgResponseGetVersion);
+                lib.storeData.apiVersion = lib.apiVersion;
             }
 
             if (Protocol.tloggerIds.get("GETNFCUID") == header.msgId){
                 lib.nfcId = GetResponseGetNfcUid(mimePayload);
+                lib.storeData.nfcId = lib.nfcId;
+            }
+
+            if ((Protocol.tloggerIds.get("SETCONFIG") == header.msgId)&&(header.direction.getValue()==1)){
+                lib.msgErr = findError(mimePayload);
             }
 
             if (Protocol.tloggerIds.get("GETMEASUREMENTS")==header.msgId){
                 Protocol.TLOGGER_MSG_RESPONSE_GETMEASUREMENTS msgResponseGetMeasurements = GetResponseGetMeasurements(mimePayload);
+                lib.measuredStatus = msgResponseGetMeasurements.result;
                 lib.measuredData = new short[msgResponseGetMeasurements.count];
                 lib.measuredData = msgResponseGetMeasurements.data;
                 lib.measurementsCount+= msgResponseGetMeasurements.count;
+                lib.storeData.retrievedCount = lib.measurementsCount;
 
             }
         }
@@ -89,8 +106,10 @@ public class ResponseHandler {
             String textData = new String(text);
             textData += "\n";
             lib.textStatus += textData;
+            lib.storeData.textStatus = lib.textStatus;
 
         }
+
 
 
     }
@@ -159,6 +178,23 @@ public class ResponseHandler {
         else
         if (Protocol.DEVICE_ID.NHS3152_DEVICE.getValue()==deviceId) return Protocol.DEVICE_ID.NHS3152_DEVICE;
         else return null;
+
+    }
+
+    private Protocol.MSG_ERR findError(Protocol.MimePayload mimePayload){
+        Protocol.MSG_ERR msgErr = Protocol.MSG_ERR.MSG_OK;
+
+        int error = ((mimePayload.data[0]&0xff)|
+                ((mimePayload.data[1]&0xff)<<8)|
+                ((mimePayload.data[2]&0xff)<<16)|
+                ((mimePayload.data[3]&0xff)<<24)
+        );
+
+        for (Protocol.MSG_ERR msg: Protocol.MSG_ERR.values()){
+            if (msg.getValue() == error)
+                return msg;
+        }
+        return msgErr;
 
     }
 

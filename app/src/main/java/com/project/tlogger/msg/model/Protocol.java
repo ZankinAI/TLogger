@@ -63,6 +63,7 @@ public class Protocol {
         MSG_ERR_NO_RESPONSE(0x1000B),
         MSG_ERR_INVALID_COMMAND_SIZE(0x1000D),
         MSG_ERR_INVALID_PARAMETER( 0x1000E),
+        MSG_ERR_UNKNOWN_ERROR(0xFFFFFF),
         MSG_ERR_INVALID_PRECONDITION(0x1000F);
 
         private int value;
@@ -70,6 +71,8 @@ public class Protocol {
         MSG_ERR(int i) {
             this.value = i;
         }
+
+        public int getValue() { return  value;}
     }
 
     public enum DEVICE_ID{
@@ -183,8 +186,8 @@ public class Protocol {
         public int runningTime=40;
         public int runningTimeMeasure=0;
 
-        public int validMinimum = 20;
-        public int validMaximum = 35;
+        public int validMinimum = 200;
+        public int validMaximum = 350;
 
         public TLOGGER_MSG_CMD_SETCONFIG(){};
 

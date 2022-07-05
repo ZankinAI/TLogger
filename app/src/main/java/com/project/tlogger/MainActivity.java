@@ -3,6 +3,8 @@ package com.project.tlogger;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -21,22 +23,22 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import com.project.tlogger.ui.EndMeasurements;
-import com.project.tlogger.ui.IntervalOfMeasurements;
+import com.project.tlogger.msg.model.DatabaseHelper;
+import com.project.tlogger.msg.model.StoreDataModel;
+import com.project.tlogger.msg.model.Utils;
+import com.project.tlogger.ui.settings.dialogs.EndMeasurements;
+import com.project.tlogger.ui.settings.dialogs.IntervalOfMeasurements;
 import com.project.tlogger.msg.CommandHandler;
 import com.project.tlogger.msg.Lib;
 import com.project.tlogger.msg.ResponseHandler;
-import com.project.tlogger.ui.NFCStart;
-import com.project.tlogger.ui.StartMeasurements;
+import com.project.tlogger.ui.settings.dialogs.NFCStart;
+import com.project.tlogger.ui.settings.dialogs.StartMeasurements;
 import com.project.tlogger.msg.model.Protocol;
-import com.project.tlogger.ui.TemperatureRange;
+import com.project.tlogger.ui.settings.dialogs.TemperatureRange;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -44,9 +46,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.project.tlogger.databinding.ActivityMainBinding;
 
-import org.w3c.dom.Text;
-
-import javax.sql.StatementEvent;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements onSomeEventListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
     public static Lib msgLib;
@@ -74,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     public NFCStart nfcDialogEvent;
     int[] timeMeasure = {R.plurals.seconds_plural ,R.plurals.minuits_plural, R.plurals.hours_plural};
     private  CommandHandler cmdHandler;
+    DatabaseHelper databaseHelper;
+    SQLiteDatabase db;
+    Cursor userCursor;
 
 
     @Override
@@ -126,12 +132,17 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        databaseHelper = new DatabaseHelper(getApplicationContext());
+        // создаем базу данных
+        databaseHelper.create_db();
     }
 
 
     @Override
-    public void someEvent(String s){
-        Log.d(TAG, s);
+    public void someEvent(int pos){
+        Log.d(TAG, String.valueOf(pos));
+        msgLib.selectedStoreData = msgLib.storeDataModelList.get(pos);
         /*FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         TemperatureFragment temperatureFragment = new TemperatureFragment();
@@ -147,16 +158,41 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        MainActivity.msgLib.flagOpenFragmentFromHistory = false;
-
-
         Log.d(TAG, "on Resume");
+        MainActivity.msgLib.flagOpenFragmentFromHistory = false;
+        String nfcid = "gfg";
+        String status = "gfgfg";
+
+        if (!msgLib.flagReadFromDB){
+            StoreDataModel temp;
+            db = databaseHelper.open();
+            //получаем данные из бд в виде курсора
+            userCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE, null);
+            if (userCursor.moveToFirst()){
+                do {
+                    temp = new StoreDataModel(userCursor);
+                    msgLib.storeDataModelList.add(temp);
+                } while(userCursor.moveToNext());
+                Log.d(TAG, "first data from db");
+                msgLib.flagReadFromDB = true;
+            }
+            else {
+                Log.d(TAG, "no data from db");
+            }
+
+            userCursor.close();
+            db.close();
+
+            Log.d(TAG, "end db");
+
+
+        }
+
 
         if (nfcAdapter!=null)
             if (!nfcAdapter.isEnabled())
                 Log.d(TAG, "not Enable NFS");
-
-           nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
     }
 
     @Override
@@ -166,102 +202,57 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         setIntent(intent);
         Log.d(TAG, "onNewIntent");
 
-        msgLib.textStatus="";
+
+
+
+
+        ResponseHandler rsp;
+        if (msgLib.setConfigurationFlag){
+
+            if( nfcDialog!=null) {
+                //if (nfcDialog.isVisible()) {
+                nfcDialog.dismiss();
+                //}
+            }
+            if(nfcDialogEvent!=null)
+            {
+                nfcDialogEvent.dismiss();
+            }
+            nfcDialogEvent = new NFCStart();
+            Bundle bundle = new Bundle();
+            //bundle.putString("", "Hello");
+
+
+            Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            msgLib.cmdSetConfig.currentTime = (int)(timestamp.getTime()/1000);
+
+            NdefMessage ndefMessageSetConfig = cmdHandler.createCmdSetConfig(msgLib.cmdSetConfig);
+
+            try {
+                ndef.connect();
+                if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
+                ndef.writeNdefMessage(ndefMessageSetConfig);
+                NdefMessage response;
+                response = ndef.getNdefMessage();
+                NdefRecord[] records1 = response.getRecords();
+                rsp = new ResponseHandler(msgLib, records1[0]);
+                Log.d(TAG, "write msg");
+                ndef.close();
+
+            }
+            catch (Exception e){
+                Log.d(TAG, "no connect");
+            }
+            bundle.putInt("",msgLib.msgErr.getValue());
+            nfcDialogEvent.setArguments(bundle);
+            nfcDialogEvent.show(getSupportFragmentManager(), "custom");
+            msgLib.setConfigurationFlag = false;
+            return;
+
+        }
         msgLib.flagTloggerConnected = true;
 
-        /*TextView textView = findViewById(R.id.nfc_start_text);
-        textView.setText("hello");*/
-
-        /*NFCStart myFragment = new NFCStart();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.dialog_time, myFragment, "testfragment");
-        fragmentTransaction.commit();*/
-
-/*        TextView textView = (TextView) findViewById(R.id.nfc_start_text);
-        if(textView != null)
-            Log.d("mytag", textView.toString());*/
-        if( nfcDialog!=null) {
-            //if (nfcDialog.isVisible()) {
-                nfcDialog.dismiss();
-            //}
-        }
-
-        if(nfcDialogEvent!=null)
-        {
-            nfcDialogEvent.dismiss();
-        }
-
-        nfcDialogEvent = new NFCStart();
-
-        Bundle bundle = new Bundle();
-        bundle.putString("", "Hello");
-        nfcDialogEvent.setArguments(bundle);
-
-        nfcDialogEvent.show(getSupportFragmentManager(), "custom");
-
-        /*NFCStart myFragment1 = (NFCStart) getSupportFragmentManager().findFragmentByTag("testfragment");
-        if (myFragment!=null){
-            Log.d("mytag", "fragment!=null");
-            myFragment.setText("dasd");
-        }else {
-            Log.d("mytag", "fragment=null");
-        }*/
-
-        Protocol.Direction direction = Protocol.Direction.Incoming;
-       /* byte[] testPayload = {0x48, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x10,
-                (byte)0x8E, 0x62, 0x0f, 0x00, 0x0A, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, (byte)0xC8, 0x00, 0x5e,0x01,
-                (byte) 0xff, 0x7f, 0x00, (byte)0x80, 0x00, 0x00, (byte)0x97,0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,0x00,
-                0x00, 0x00
-        };
-
-        byte[] testGetVersion = { 0x02, 0x01, 0x00, 0x00, (byte)0xFB, 0x07, 0x13, 0x00,
-                0x06, 0x00, 0x01, 0x00, 0x20, 0x00, 0x31, 0x4E};
-
-        byte[] testText1 = {0x02, 0x65, 0x6E, 0x53, 0x74, 0x6F, 0x70, 0x70,
-                0x65, 0x64, 0x2E, 0x20, 0x20, 0x20, 0x20, 0x20,
-                0x30, 0x20, 0x73, 0x61, 0x6D, 0x70, 0x6C, 0x65,
-                0x73, 0x20, 0x6C, 0x6F, 0x67, 0x67, 0x65, 0x64,
-                0x2E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00
-        };
-
-
-        byte[] testText2 = {0x02, 0x65, 0x6E, 0x41, 0x4C, 0x45, 0x52, 0x54,
-                0x3A, 0x20, 0x62, 0x61, 0x74, 0x74, 0x65, 0x72,
-                0x79, 0x20, 0x69, 0x73, 0x20, 0x65, 0x6D, 0x70,
-                0x74, 0x79, 0x2E, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00
-        };
-
-        byte[] testText3 = {0x02, 0x65, 0x6E, 0x43, 0x75, 0x72, 0x72, 0x65,
-                0x6E, 0x74, 0x20, 0x74, 0x65, 0x6D, 0x70, 0x65,
-                0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x3A, 0x20,
-                0x20, 0x32, 0x37, 0x2E, 0x39, 0x43, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
-
-
-
-        NdefRecord mimeRecord = NdefRecord.createMime("n/p", testPayload);
-        NdefRecord mimeRecordGetVersion = NdefRecord.createMime("n/p", testGetVersion);
-        NdefRecord ndefText1 = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, testText1);
-        ResponseHandler rsptext1 = new ResponseHandler(msgLib, ndefText1);
-        NdefRecord ndefText2 = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, testText2);
-        ResponseHandler rsptext2 = new ResponseHandler(msgLib, ndefText2);
-        NdefRecord ndefText3 = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, testText3);
-        ResponseHandler rsptext3 = new ResponseHandler(msgLib, ndefText3);
-        ResponseHandler rsp = new ResponseHandler(msgLib, mimeRecord);
-        ResponseHandler rsp1 = new ResponseHandler(msgLib, mimeRecordGetVersion);*/
-        ResponseHandler rsp;
         Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
         navController.navigate( R.id.navigation_temperature);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
@@ -279,9 +270,13 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
                 NdefMessage msg = (NdefMessage)rawMsgs[0];
                 NdefRecord[] records = msg.getRecords();
+                if (records.length>2) {
+                    msgLib.flagStandartMessageReceive = true;
+                    msgLib.textStatus="";
+
+                }
 
                 for(NdefRecord ndefRecord : records ){
-
                     Log.d(TAG, "read the record");
                     rsp = new ResponseHandler(msgLib, ndefRecord);
                 }
@@ -322,11 +317,12 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             ndef.connect();
             if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
             ndef.writeNdefMessage(ndefMessage);
-            //ndef.writeNdefMessage(ndefMessageSetConfig);
             response = ndef.getNdefMessage();
             NdefRecord[] records1 = response.getRecords();
             rsp = new ResponseHandler(msgLib, records1[0]);
             Log.d(TAG, "write msg");
+
+
             ndef.close();
 
         }
@@ -335,7 +331,18 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
         }
 
+        if (msgLib.flagStandartMessageReceive){
 
+            //Добавить запись в БД
+            createStoreData();
+            msgLib.storeDataModelList.add(msgLib.storeData);
+
+            db = databaseHelper.open();
+            databaseHelper.saveDataToDB(db, msgLib.storeData);
+            db.close();
+
+        }
+        msgLib.flagStandartMessageReceive = false;
     }
 
     private String dumpTagData(Tag tag) {
@@ -471,6 +478,8 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
     }
 
+
+
     @Override
     public void sendInput(int dialogId, int number, int time) {
         //Log.d(TAG2, "sendInput: got the input: " + number + " " + time);
@@ -600,57 +609,21 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         }
     }
 
+    public void createStoreData(){
+        msgLib.storeData.nfcId = msgLib.nfcId;
+        msgLib.storeData.apiVersion = msgLib.apiVersion;
+        msgLib.storeData.textStatus = msgLib.textStatus;
+        msgLib.storeData.statusOfMeasured = msgLib.measuredStatus;
+        msgLib.storeData.responseConfigData =  msgLib.rspGetConfig;
+        msgLib.storeData.retrievedCount = msgLib.count;
+        Date currentDate = new Date();
+        msgLib.storeData.data = Utils.masShortToString(msgLib.measuredData);
+
+        short[] temp = Utils.StringtoMasShort(msgLib.storeData.data);
+        msgLib.storeData.dataTime = currentDate.getTime()/1000;
+    }
+
 }
 
-class Utils {
-    public static String toHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = bytes.length - 1; i >= 0; --i) {
-            int b = bytes[i] & 0xff;
-            if (b < 0x10)
-                sb.append('0');
-            sb.append(Integer.toHexString(b));
-            if (i > 0) {
-                sb.append(" ");
-            }
-        }
-        return sb.toString();
-    }
 
-    public static String toReversedHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; ++i) {
-            if (i > 0) {
-                sb.append(" ");
-            }
-            int b = bytes[i] & 0xff;
-            if (b < 0x10)
-                sb.append('0');
-            sb.append(Integer.toHexString(b));
-        }
-        return sb.toString();
-    }
-
-    public static long toDec(byte[] bytes) {
-        long result = 0;
-        long factor = 1;
-        for (int i = 0; i < bytes.length; ++i) {
-            long value = bytes[i] & 0xffl;
-            result += value * factor;
-            factor *= 256l;
-        }
-        return result;
-    }
-
-    public static long toReversedDec(byte[] bytes) {
-        long result = 0;
-        long factor = 1;
-        for (int i = bytes.length - 1; i >= 0; --i) {
-            long value = bytes[i] & 0xffl;
-            result += value * factor;
-            factor *= 256l;
-        }
-        return result;
-    }
-}
 

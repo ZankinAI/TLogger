@@ -11,20 +11,15 @@
         <entry key="..\:/TLogger/app/src/main/res/layout/about_fragment.xml" value="0.1" />
         <entry key="..\:/TLogger/app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="..\:/TLogger/app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="..\:/TLogger/app/src/main/res/layout/end_measurements.xml" value="0.3015625" />
-        <entry key="..\:/TLogger/app/src/main/res/layout/fragment_dashboard.xml" value="0.19791666666666666" />
         <entry key="..\:/TLogger/app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="..\:/TLogger/app/src/main/res/layout/fragment_notifications.xml" value="0.1" />
         <entry key="..\:/TLogger/app/src/main/res/layout/history_fragment.xml" value="0.1" />
-        <entry key="..\:/TLogger/app/src/main/res/layout/interval_of_measurements.xml" value="0.3015625" />
         <entry key="..\:/TLogger/app/src/main/res/layout/layout_action_bar.xml" value="0.1" />
         <entry key="..\:/TLogger/app/src/main/res/layout/list_item.xml" value="0.16621376811594202" />
-        <entry key="..\:/TLogger/app/src/main/res/layout/nfc_start.xml" value="0.30625" />
         <entry key="..\:/TLogger/app/src/main/res/layout/settings_fragment.xml" value="0.5" />
         <entry key="..\:/TLogger/app/src/main/res/layout/start_measurements.xml" value="0.4634146341463415" />
         <entry key="..\:/TLogger/app/src/main/res/layout/temperature_chart_fragment.xml" value="0.16621376811594202" />
         <entry key="..\:/TLogger/app/src/main/res/layout/temperature_fragment.xml" value="0.31296296296296294" />
-        <entry key="..\:/TLogger/app/src/main/res/layout/temperature_range.xml" value="0.30104166666666665" />
         <entry key="..\:/TLogger/app/src/main/res/layout/temperature_status_fragment.xml" value="0.22" />
         <entry key="..\:/TLogger/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/drawable/anychart.xml" value="0.1895" />
@@ -43,6 +38,7 @@
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/history_fragment.xml" value="0.25" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/layout_action_bar.xml" value="0.5" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/list_item.xml" value="0.18" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/nfc_start.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/settings_fragment.xml" value="0.25" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_chart_fragment.xml" value="0.2" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_fragment.xml" value="0.17481884057971014" />

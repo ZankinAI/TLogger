@@ -20,12 +20,17 @@ import android.widget.TextView;
 
 import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
+import com.project.tlogger.msg.Lib;
+import com.project.tlogger.msg.model.MeasurementStatusModel;
+import com.project.tlogger.msg.model.TemperatureStatusModel;
+import com.project.tlogger.msg.model.Utils;
 
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +40,20 @@ import kotlin.text.UStringsKt;
 public class TemperatureChartFragment extends Fragment {
     private final static String TAG = "NFC Debbug";
     private TemperatureChartViewModel mViewModel;
+
+    private Lib _msgLib;
+
+    private String nfcId;
+    private int count;
+    private String dataTime;
+    private int interval;
+    private int measurementsCount;
+    private short validMin;
+    private short validMax;
+    private short attainedMin;
+    private short attainedMax;
+
+
     public static String  htmlContent =
             "<html>\n" +
                     "<head>\n" +
@@ -110,39 +129,42 @@ public class TemperatureChartFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
 
+        _msgLib = MainActivity.msgLib;
 
+        createDataFragment();
         View view = inflater.inflate(R.layout.temperature_chart_fragment, container, false);
 
         TextView textNfcId = view.findViewById(R.id.nfc_id_text);
-        textNfcId.setText(MainActivity.msgLib.nfcId);
+        textNfcId.setText(nfcId);
 
         TextView textCount = view.findViewById(R.id.number_of_measurements_text);
-        textCount.setText(String.valueOf(MainActivity.msgLib.count));
+        textCount.setText(String.valueOf(count));
 
-        LocalDateTime dateTime = LocalDateTime.ofEpochSecond(MainActivity.msgLib.configTime+10800, 0, ZoneOffset.UTC);
-        TextView textConfigurationTime = view.findViewById(R.id.configuration_time_text);
+        /*LocalDateTime dateTime = LocalDateTime.ofEpochSecond(MainActivity.msgLib.configTime+10800, 0, ZoneOffset.UTC);
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = dateTime.format(formatter);
-        textConfigurationTime.setText(formattedDateTime);
+        String formattedDateTime = dateTime.format(formatter);*/
+        TextView textConfigurationTime = view.findViewById(R.id.configuration_time_text);
+        textConfigurationTime.setText(dataTime);
 
         TextView textLoggingFor = view.findViewById(R.id.logging_for_text);
-        String textLoggingForStr = String.valueOf(MainActivity.msgLib.count * MainActivity.msgLib.interval);
+        String textLoggingForStr = String.valueOf(count * interval);
         textLoggingForStr +=" сек";
         textLoggingFor.setText(textLoggingForStr);
 
         TextView textMeasurements = view.findViewById(R.id.values_count_text);
-        textMeasurements.setText(String.valueOf(MainActivity.msgLib.measurementsCount));
+        textMeasurements.setText(String.valueOf(measurementsCount));
 
         TextView textMeasurementInterval = view.findViewById(R.id.measurment_intertval_text);
-        String textMeasurementIntervalStr = String.valueOf(MainActivity.msgLib.interval) + " сек";
+        String textMeasurementIntervalStr = String.valueOf(interval) + " сек";
         textMeasurementInterval.setText(textMeasurementIntervalStr);
 
         TextView textMinValid = view.findViewById(R.id.min_valid_text);
-        String textMinValidStr = String.valueOf(MainActivity.msgLib.validMinimum/10) + " 'C";
+        String textMinValidStr = String.valueOf(validMin/10) + " 'C";
         textMinValid.setText(textMinValidStr);
 
         TextView textMaxValid = view.findViewById(R.id.max_valid_text);
-        String textMaxValidStr = String.valueOf(MainActivity.msgLib.validMaximum/10) + " 'C";
+        String textMaxValidStr = String.valueOf(validMax/10) + " 'C";
         textMaxValid.setText(textMaxValidStr);
 
         //saveHtmlFile();
@@ -154,14 +176,17 @@ public class TemperatureChartFragment extends Fragment {
         webSettings.setJavaScriptEnabled(true);
         String html = "<html><head><title>Title</title></head><body>This is random text.</body></html>";
         //browserChart.loadData(htmlContent, "text/html", "UTF-8");
-        browserChart.loadUrl("file:///android_asset/chart1.html");
-        String htmlText = createChartHtml((float)(MainActivity.msgLib.validMinimum/10.0) , (float)(MainActivity.msgLib.validMaximum/10.0), (float)(MainActivity.msgLib.attainedMinimunm/10.0),  (float)(MainActivity.msgLib.attainedMaximum/10.0));
+        //browserChart.loadUrl("file:///android_asset/chart1.html");
+        String htmlText = createChartHtml((float)(validMin/10.0) , (float)(validMax/10.0), (float)(attainedMin/10.0),  (float)(attainedMax/10.0));
         browserChart.loadDataWithBaseURL("file:///android_asset/Js/", htmlText, "text/html", "UTF-8", null);
         //browserChart.loadData(htmlContent, "text/html", "UTF-8");
         return view;
     }
 
     private String createChartHtml(float validMin, float validMax, float attainedMin, float attainedMax){
+
+        boolean addTrandPoints = true;
+
         final float  MinLimit = -40.0f;
         final float MaxLimit = 85.0f;
 
@@ -176,6 +201,16 @@ public class TemperatureChartFragment extends Fragment {
         float recMin = attainedMin;
         float recMax = attainedMax;
 
+        if (recMin*10 == 32767) {
+
+            recMin = configMin;
+        }
+        if (recMax*10 == -32768){
+            addTrandPoints = false;
+            recMax = configMax;
+        }
+
+
         if (recMin < configMin) minLimit = recMin;
         if (recMax > configMax) maxLimit = recMax;
 
@@ -185,7 +220,39 @@ public class TemperatureChartFragment extends Fragment {
         if (minLimit < MinLimit) minLimit = MinLimit;
         if (maxLimit > MaxLimit) maxLimit = MaxLimit;
 
+        String trendPoint;
+        if (addTrandPoints){
+            trendPoint =                 "\"trendPoints\": {\n" +
+                    "\"point\": [\n" +
+                    "{\n"+
+                    "\"startValue\": \""+String.valueOf(recMin)+"\",\n"+
+                    "\"color\": \"#dddddd\",\n" +
+                    "\"dashed\": \"1\",\n" +
+                    "\"dashlen\": \"3\",\n" +
+                    "\"dashgap\": \"3\",\n" +
+                    "\"thickness\": \"2\",\n" +
+                    "\"useMarker\":\"1\",\n" +
+                    "\"showOnTop\":\"0\",\n" +
+                    "},\n" +
+                    "{\n"+
+                    "\"startValue\": \""+String.valueOf(recMax)+"\",\n"+
+                    "\"color\": \"#dddddd\",\n" +
+                    "\"dashed\": \"1\",\n" +
+                    "\"dashlen\": \"3\",\n" +
+                    "\"dashgap\": \"3\",\n" +
+                    "\"thickness\": \"2\",\n" +
+                    "\"useMarker\":\"1\",\n" +
+                    "\"showOnTop\":\"0\",\n" +
+                    "},\n" +
+                    "{\n"+
+                    "\"startValue\": \""+String.valueOf(recMin)+"\",\n" +
+                    "\"endValue\": \""+String.valueOf(recMax)+"\",\n" +
+                    "\"displayValue\": \" \",\n" +
+                    "\"alpha\": \"40\"" +
+                    "}\n" +
+                    "]},\n";
 
+        }else trendPoint = "";
 
         String htmlChart =  "<html>\n" +
                 "<head>\n" +
@@ -241,38 +308,11 @@ public class TemperatureChartFragment extends Fragment {
                 "},\n" +
                 "\"pointers\": {\n" +
                 "\"pointer\": [\n"+
-                "{\"value\": \""+String.valueOf(recMin)+"\",},\n"+
-                "{\"value\": \""+String.valueOf(recMax)+"\",},\n"+
+                "{\"value\": \""+String.valueOf(configMin)+"\",},\n"+
+                "{\"value\": \""+String.valueOf(configMax)+"\",},\n"+
                 "]},\n" +
-                "\"trendPoints\": {\n" +
-                "\"point\": [\n" +
-                "{\n"+
-                "\"startValue\": \""+String.valueOf(recMin)+"\",\n"+
-                "\"color\": \"#dddddd\",\n" +
-                "\"dashed\": \"1\",\n" +
-                "\"dashlen\": \"3\",\n" +
-                "\"dashgap\": \"3\",\n" +
-                "\"thickness\": \"2\",\n" +
-                "\"useMarker\":\"1\",\n" +
-                "\"showOnTop\":\"0\",\n" +
-                "},\n" +
-                "{\n"+
-                "\"startValue\": \""+String.valueOf(recMax)+"\",\n"+
-                "\"color\": \"#dddddd\",\n" +
-                "\"dashed\": \"1\",\n" +
-                "\"dashlen\": \"3\",\n" +
-                "\"dashgap\": \"3\",\n" +
-                "\"thickness\": \"2\",\n" +
-                "\"useMarker\":\"1\",\n" +
-                "\"showOnTop\":\"0\",\n" +
-                "},\n" +
-                "{\n"+
-                "\"startValue\": \""+String.valueOf(recMin)+"\",\n" +
-                "\"endValue\": \""+String.valueOf(recMax)+"\",\n" +
-                "\"displayValue\": \" \",\n" +
-                "\"alpha\": \"40\"" +
-                "}\n" +
-                "]},\n"+
+                trendPoint
+                +
                 "}\n" +
                 "}).render();\n" +
                 "</script>\n" +
@@ -287,6 +327,35 @@ public class TemperatureChartFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(TemperatureChartViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+    private void createDataFragment(){
+        if (_msgLib.flagOpenFragmentFromHistory){
+            nfcId = _msgLib.selectedStoreData.nfcId;
+            count = _msgLib.selectedStoreData.responseConfigData.count;
+            dataTime = String.valueOf(new Timestamp((long)_msgLib.selectedStoreData.responseConfigData.configTime*1000));
+            interval = _msgLib.selectedStoreData.responseConfigData.interval;
+            measurementsCount = _msgLib.selectedStoreData.retrievedCount;
+            validMin = _msgLib.selectedStoreData.responseConfigData.validMinimum;
+            validMax = _msgLib.selectedStoreData.responseConfigData.validMaximum;
+            attainedMin =_msgLib.selectedStoreData.responseConfigData.attainedMinimum;
+            attainedMax =_msgLib.selectedStoreData.responseConfigData.attainedMaximum;
+        }
+        else if (_msgLib.flagTloggerConnected) {
+
+            nfcId = _msgLib.storeData.nfcId;
+            count = _msgLib.storeData.responseConfigData.count;
+            dataTime = String.valueOf(new Timestamp(_msgLib.storeData.responseConfigData.configTime*1000));
+            interval = _msgLib.storeData.responseConfigData.interval;
+            measurementsCount = _msgLib.storeData.retrievedCount;
+            validMin = _msgLib.storeData.responseConfigData.validMinimum;
+            validMax = _msgLib.storeData.responseConfigData.validMaximum;
+            attainedMin =_msgLib.storeData.responseConfigData.attainedMinimum;
+            attainedMax =_msgLib.storeData.responseConfigData.attainedMaximum;
+
+        }
+
+
     }
 
 

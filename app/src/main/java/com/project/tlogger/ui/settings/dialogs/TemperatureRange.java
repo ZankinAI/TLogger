@@ -1,4 +1,4 @@
-package com.project.tlogger.ui;
+package com.project.tlogger.ui.settings.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +22,7 @@ import com.project.tlogger.R;
 
 import org.jetbrains.annotations.Nullable;
 
-public class EndMeasurements extends DialogFragment implements View.OnClickListener {
+public class TemperatureRange extends DialogFragment implements View.OnClickListener {
 
     private static final String TAG = "DialogFragment";
     public interface OnInputListener {
@@ -30,36 +30,44 @@ public class EndMeasurements extends DialogFragment implements View.OnClickListe
     }
     public OnInputListener mOnInputListener;
 
-    EditText etext;
-    Spinner espinner;
-
+    EditText lower_range, upper_range;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater  inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.end_measurements, container, false);
+        View view = inflater.inflate(R.layout.temperature_range, container, false);
 
         Bundle bundle = getArguments();
-        int[] timeToTextView = bundle.getIntArray("");
+        int[] temperatureRangeToTextView = bundle.getIntArray("");
 
 
-        view.findViewById(R.id.end_measurement_button_cancel).setOnClickListener(this);
-        view.findViewById(R.id.end_measurement_button_ok).setOnClickListener(this);
-        view.findViewById(R.id.end_measurement_button_immediate).setOnClickListener(this);
-        etext = view.findViewById(R.id.end_measurements_time);
+        view.findViewById(R.id.temperature_range_button_ok).setOnClickListener(this);
+        view.findViewById(R.id.temperature_range_cancel).setOnClickListener(this);
 
-        etext.setText(Integer.toString(timeToTextView[0]));
+        lower_range = view.findViewById(R.id.lower_range);
 
-        espinner = view.findViewById(R.id.end_measurement_spinner);
+        lower_range.setText(Integer.toString(temperatureRangeToTextView[0]));
 
-        espinner.setSelection(timeToTextView[1]);
+        upper_range = view.findViewById(R.id.upper_range);
+
+        upper_range.setText(Integer.toString(temperatureRangeToTextView[1]));
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
-        etext.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        lower_range.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
+
+        upper_range.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
@@ -80,30 +88,28 @@ public class EndMeasurements extends DialogFragment implements View.OnClickListe
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.end_measurement_button_ok:
-                if (etext != null){
-                    int text = Integer.valueOf(etext.getText().toString().trim());
-                    MainActivity.msgLib.cmdSetConfig.runningTime = text;
-                    int textSpinner = espinner.getSelectedItemPosition();
-                    MainActivity.msgLib.cmdSetConfig.runningTimeMeasure = textSpinner;
-                    mOnInputListener.sendInput(2, text, textSpinner);
+            case R.id.temperature_range_button_ok:
+                if (lower_range != null && upper_range != null){
+                    int lower_range_send = Integer.valueOf(lower_range.getText().toString().trim());
+                    int upper_range_send = Integer.valueOf(upper_range.getText().toString().trim());
+                    if (lower_range_send > upper_range_send){
+                        int temp = lower_range_send;
+                        lower_range_send = upper_range_send;
+                        upper_range_send = temp;
+                    }
+                    MainActivity.msgLib.cmdSetConfig.validMinimum = lower_range_send*10;
+                    MainActivity.msgLib.cmdSetConfig.validMaximum = upper_range_send*10;
+                    mOnInputListener.sendInput(3, lower_range_send, upper_range_send);
 
                 }
                 else {
-                    mOnInputListener.sendInput(2, 0, 0);
+                    mOnInputListener.sendInput(3, 0, 0);
                 }
                 //
                 dismiss();
                 break;
 
-            case R.id.end_measurement_button_immediate:
-                mOnInputListener.sendInput(2, 0, 3);
-                MainActivity.msgLib.cmdSetConfig.runningTime = 0;
-                MainActivity.msgLib.cmdSetConfig.runningTimeMeasure = 0;
-                dismiss();
-                break;
-
-            case R.id.end_measurement_button_cancel:
+            case R.id.temperature_range_cancel:
                 dismiss();
                 break;
             default:

@@ -26,12 +26,16 @@ import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
+import com.project.tlogger.msg.Lib;
+import com.project.tlogger.msg.model.Utils;
 
 import java.util.ArrayList;
 
 public class TemperatureGraphFragment extends Fragment implements OnChartGestureListener {
 
     private TemperatureGraphViewModel mViewModel;
+    private Lib _msgLib;
+    private short[] data;
 
     public static TemperatureGraphFragment newInstance() {
         return new TemperatureGraphFragment();
@@ -43,13 +47,27 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
                              @Nullable Bundle savedInstanceState) {
        View v = inflater.inflate(R.layout.temperature_graph_fragment, container, false);
 
+
+       _msgLib = MainActivity.msgLib;
+
+       if (_msgLib.flagOpenFragmentFromHistory)
+           data = Utils.StringtoMasShort(_msgLib.selectedStoreData.data);
+       else if (_msgLib.flagTloggerConnected)
+           data = Utils.StringtoMasShort(_msgLib.storeData.data);
+
+       if (data==null)
+       {
+           return v;
+       }
+
+
         ArrayList<BarEntry> entries = new ArrayList<>();
 
-        int[] colors = new int[MainActivity.msgLib.measuredData.length];
+        int[] colors = new int[data.length];
         float[] hsv= new float[3];
-        for (int i = 0; i< MainActivity.msgLib.measuredData.length; i++){
-            entries.add(new BarEntry(i,   (float) (MainActivity.msgLib.measuredData[i]/10.0) ));
-            hsv[0]=300-MainActivity.msgLib.measuredData[i]/10;
+        for (int i = 0; i< data.length; i++){
+            entries.add(new BarEntry(i,   (float) (data[i]/10.0) ));
+            hsv[0]=300-data[i]/10;
             hsv[1]=100;
             hsv[2]=100;
             colors[i]=Color.HSVToColor(hsv);

@@ -20,7 +20,7 @@
         android:layout_marginTop="35dp"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="Режим конфигурации запущен..."
+        android:text="Режим конфигурации запущен. Приложите устройство к датчику."
         android:textColor="@color/default_blue"
         android:textSize="16sp" />
 

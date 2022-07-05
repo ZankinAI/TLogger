@@ -19,13 +19,18 @@ import com.project.tlogger.R;
 import com.project.tlogger.msg.Lib;
 import com.project.tlogger.msg.model.MeasurementStatusModel;
 import com.project.tlogger.msg.model.TemperatureStatusModel;
+import com.project.tlogger.msg.model.Utils;
 
 public class TemperatureStatusFragment extends Fragment {
 
     private TemperatureStatusViewModel mViewModel;
     private  Lib _msgLib;
-    private String statusText;
+
     private int statusIcon;
+    private String statusText;
+    private String textStatus;
+    private String apiVersion;
+    private String mimeType;
 
 
     private static final String STATUS_LABEL_MESSAGE_NOT_SUPPORTED =
@@ -76,26 +81,47 @@ public class TemperatureStatusFragment extends Fragment {
 
         _msgLib = MainActivity.msgLib;
         statusIcon = R.drawable.logo_bordered;
+        createDataFragment();
         View view = inflater.inflate(R.layout.temperature_status_fragment, container, false);
         TextView textViewInfo = view.findViewById(R.id.temp_info);
-        textViewInfo.setText(_msgLib.textStatus);
-
-
+        textViewInfo.setText(textStatus);
 
         TextView textViewApiVersion = view.findViewById(R.id.system_info);
-        textViewApiVersion.setText(_msgLib.apiVersion);
+        textViewApiVersion.setText(apiVersion);
 
         TextView textViewMimeType = view.findViewById(R.id.mime_type);
         textViewMimeType.setText(_msgLib.mimeType);
 
         TextView textViewStatus = view.findViewById(R.id.temp_status);
         ImageView imageViewStatus = view.findViewById(R.id.temp_status_image);
-        if (_msgLib.flagTloggerConnected) createStatus();
+        //if (_msgLib.flagTloggerConnected) createStatus();
 
         imageViewStatus.setImageResource(statusIcon);
         textViewStatus.setText(statusText);
-
         return view;
+    }
+
+    private void createDataFragment(){
+        if (_msgLib.flagOpenFragmentFromHistory){
+            textStatus = _msgLib.selectedStoreData.textStatus;
+            apiVersion = _msgLib.selectedStoreData.apiVersion;
+            Object[] parsedStatus = Utils.parsingEvent(_msgLib.selectedStoreData.responseConfigData.status);
+            MeasurementStatusModel.Measurement measurementStatus = (MeasurementStatusModel.Measurement) parsedStatus[0];
+            MeasurementStatusModel.Failure failureStatus = (MeasurementStatusModel.Failure) parsedStatus[1];
+            TemperatureStatusModel.Temperature temperatureStatus = (TemperatureStatusModel.Temperature) parsedStatus[2];
+            createStatus(measurementStatus, failureStatus, temperatureStatus);
+        }
+        else if (_msgLib.flagTloggerConnected) {
+            textStatus = _msgLib.storeData.textStatus;
+            apiVersion = _msgLib.storeData.apiVersion;
+            Object[] parsedStatus = Utils.parsingEvent(_msgLib.storeData.responseConfigData.status);
+            MeasurementStatusModel.Measurement measurementStatus = (MeasurementStatusModel.Measurement) parsedStatus[0];
+            MeasurementStatusModel.Failure failureStatus = (MeasurementStatusModel.Failure) parsedStatus[1];
+            TemperatureStatusModel.Temperature temperatureStatus = (TemperatureStatusModel.Temperature) parsedStatus[2];
+            createStatus(measurementStatus, failureStatus, temperatureStatus);
+        }
+
+
     }
 
     @Override
@@ -105,8 +131,9 @@ public class TemperatureStatusFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
-    private void createStatus(){
-        MeasurementStatusModel.Measurement status = _msgLib.measurementStatus.measurement;
+    private void createStatus(MeasurementStatusModel.Measurement measurementStatus, MeasurementStatusModel.Failure failureStatus,
+                              TemperatureStatusModel.Temperature temperatureStatus ){
+        MeasurementStatusModel.Measurement status = measurementStatus;
         switch (status){
             case Reset:
 
@@ -127,11 +154,11 @@ public class TemperatureStatusFragment extends Fragment {
                 statusIcon = R.drawable.logo_settings;
                 break;
             case Logging:
-                if (_msgLib.temperatureStatus.temperature == TemperatureStatusModel.Temperature.Low){
+                if (temperatureStatus == TemperatureStatusModel.Temperature.Low){
                     statusText = STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_LOW;
                     statusIcon = R.drawable.logo_low_temp;
                 }
-                else if (_msgLib.temperatureStatus.temperature == TemperatureStatusModel.Temperature.High){
+                else if (temperatureStatus == TemperatureStatusModel.Temperature.High){
                     statusText = STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_HIGH;
                     statusIcon = R.drawable.logo_high_temp;
                 }
@@ -141,7 +168,7 @@ public class TemperatureStatusFragment extends Fragment {
                 }
                 break;
             case Stopped:
-                switch (_msgLib.measurementStatus.failure){
+                switch (failureStatus){
                     case NoFailure:
                         statusText = STATUS_APP_MSG_EVENT_STOPPED;
                         statusIcon = R.drawable.logo_stopped_state;

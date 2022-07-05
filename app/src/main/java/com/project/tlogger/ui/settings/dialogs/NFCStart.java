@@ -1,4 +1,4 @@
-package com.project.tlogger.ui;
+package com.project.tlogger.ui.settings.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
+import com.project.tlogger.msg.model.Protocol;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -42,9 +44,13 @@ public class NFCStart extends DialogFragment implements View.OnClickListener {
 
         TextView textView = view.findViewById(R.id.nfc_start_text);
 
+        Button btn = view.findViewById(R.id.nfc_start_button);
         if (bundle != null){
-            String textToTextView = bundle.getString("");
-            textView.setText(textToTextView);
+            int error = bundle.getInt("");
+
+            //String textToTextView = bundle.getString("");
+            textView.setText(getTextFromError(error));
+            btn.setText("OK");
         }
         view.findViewById(R.id.nfc_start_button).setOnClickListener(this);
 
@@ -53,6 +59,29 @@ public class NFCStart extends DialogFragment implements View.OnClickListener {
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
         return view;
+    }
+
+
+    private String getTextFromError(int error){
+        String resultString = "Неизвестная ошибка";
+
+        if (error == Protocol.MSG_ERR.MSG_OK.getValue())
+            return "Запись прошла успешно. Считывание начнется через "
+                    + String.valueOf(MainActivity.msgLib.cmdSetConfig.startDelay) + " секунд";
+        if (error == Protocol.MSG_ERR.MSG_ERR_UNKNOWN_COMMAND.getValue())
+            return "Неизвестная команда";
+        if (error == Protocol.MSG_ERR.MSG_ERR_NO_RESPONSE.getValue())
+            return "Нет ответа. И не будет.";
+        if (error == Protocol.MSG_ERR.MSG_ERR_INVALID_COMMAND_SIZE.getValue())
+            return "Неверный размер команды!";
+        if (error == Protocol.MSG_ERR.MSG_ERR_INVALID_PARAMETER.getValue())
+            return "Неверный параметр!";
+
+        if (error == Protocol.MSG_ERR.MSG_ERR_INVALID_PRECONDITION.getValue())
+            return "В команде нет заголовка!";
+
+        return resultString;
+
     }
 
     public void setText(String item){

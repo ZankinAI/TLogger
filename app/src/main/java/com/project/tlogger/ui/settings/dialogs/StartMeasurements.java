@@ -1,4 +1,4 @@
-package com.project.tlogger.ui;
+package com.project.tlogger.ui.settings.dialogs;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +22,9 @@ import com.project.tlogger.R;
 
 import org.jetbrains.annotations.Nullable;
 
-public class IntervalOfMeasurements extends DialogFragment implements View.OnClickListener {
+import java.security.PublicKey;
+
+public class StartMeasurements extends DialogFragment implements View.OnClickListener {
 
     private static final String TAG = "DialogFragment";
     public interface OnInputListener {
@@ -38,19 +40,21 @@ public class IntervalOfMeasurements extends DialogFragment implements View.OnCli
     public View onCreateView(@NonNull LayoutInflater  inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.interval_of_measurements, container, false);
+
+        View view = inflater.inflate(R.layout.start_measurements, container, false);
 
         Bundle bundle = getArguments();
         int[] timeToTextView = bundle.getIntArray("");
 
 
-        view.findViewById(R.id.interval_of_measurements_button_ok).setOnClickListener(this);
-        view.findViewById(R.id.interval_of_measurements_cancel).setOnClickListener(this);
-        etext = view.findViewById(R.id.interval_of_measurements_time);
+        view.findViewById(R.id.start_measurement_button_cancel).setOnClickListener(this);
+        view.findViewById(R.id.start_measurement_button_ok).setOnClickListener(this);
+        view.findViewById(R.id.start_measurement_button_immediate).setOnClickListener(this);
+        etext = view.findViewById(R.id.start_time);
 
         etext.setText(Integer.toString(timeToTextView[0]));
 
-        espinner = view.findViewById(R.id.interval_of_measurements_spinner);
+        espinner = view.findViewById(R.id.spinner1);
 
         espinner.setSelection(timeToTextView[1]);
 
@@ -80,24 +84,35 @@ public class IntervalOfMeasurements extends DialogFragment implements View.OnCli
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.interval_of_measurements_button_ok:
+            case R.id.start_measurement_button_ok:
                 if (etext != null){
                     int text = Integer.valueOf(etext.getText().toString().trim());
-                    MainActivity.msgLib.cmdSetConfig.interval = text;
+                    MainActivity.msgLib.cmdSetConfig.startDelay = text;
+
+                    //Log.e("mytag", String.valueOf(MainActivity.msgLib.cmdSetConfig.startDelay));
                     int textSpinner = espinner.getSelectedItemPosition();
-                    MainActivity.msgLib.cmdSetConfig.intervalMeasure = textSpinner;
-                    mOnInputListener.sendInput(1, text, textSpinner);
+                    MainActivity.msgLib.cmdSetConfig.startDelayMeasure = textSpinner;
+                    //Log.e("mytag", String.valueOf(MainActivity.msgLib.cmdSetConfig.startDelayMeasure));
+                    mOnInputListener.sendInput(0, text, textSpinner);
 
                 }
                 else {
-                    mOnInputListener.sendInput(1, 0, 0);
-                    MainActivity.msgLib.cmdSetConfig.intervalMeasure = 0;
-                    MainActivity.msgLib.cmdSetConfig.interval = 0;
+                    mOnInputListener.sendInput(0, 0, 0);
+                    MainActivity.msgLib.cmdSetConfig.startDelayMeasure = 0;
+                    MainActivity.msgLib.cmdSetConfig.startDelay = 0;
                 }
                 //
                 dismiss();
                 break;
-            case R.id.interval_of_measurements_cancel:
+
+            case R.id.start_measurement_button_immediate:
+                mOnInputListener.sendInput(0, 0, 3);
+                MainActivity.msgLib.cmdSetConfig.startDelayMeasure = 0;
+                MainActivity.msgLib.cmdSetConfig.startDelay = 0;
+                dismiss();
+                break;
+
+            case R.id.start_measurement_button_cancel:
                 dismiss();
                 break;
             default:
@@ -105,7 +120,6 @@ public class IntervalOfMeasurements extends DialogFragment implements View.OnCli
         }
 
     }
-
     @Override public void onAttach(Context context)
     {
         super.onAttach(context);
