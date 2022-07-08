@@ -223,7 +223,7 @@ public class ResponseHandler {
         Protocol.TLOGGER_MSG_RESPONSE_GETMEASUREMENTS msgResponseGetmeasurements = new Protocol.TLOGGER_MSG_RESPONSE_GETMEASUREMENTS();
         msgResponseGetmeasurements.result =  convertFromArrayByteToInt(mimePayload.data,0);
         msgResponseGetmeasurements.offset = convertFromArrayByteToShort(mimePayload.data, 4);
-        msgResponseGetmeasurements.count = mimePayload.data[6];
+        msgResponseGetmeasurements.count = (short)(mimePayload.data[6]&0xff);
         msgResponseGetmeasurements.zero1 = mimePayload.data[7];
         msgResponseGetmeasurements.zero2 = mimePayload.data[8];
         msgResponseGetmeasurements.zero3 = mimePayload.data[9];

@@ -36,6 +36,8 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
     private TemperatureGraphViewModel mViewModel;
     private Lib _msgLib;
     private short[] data;
+    private short attainedMin;
+    private short attainedMax;
 
     public static TemperatureGraphFragment newInstance() {
         return new TemperatureGraphFragment();
@@ -50,10 +52,17 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
 
        _msgLib = MainActivity.msgLib;
 
-       if (_msgLib.flagOpenFragmentFromHistory)
+       if (_msgLib.flagOpenFragmentFromHistory){
            data = Utils.StringtoMasShort(_msgLib.selectedStoreData.data);
-       else if (_msgLib.flagTloggerConnected)
+           attainedMin = _msgLib.selectedStoreData.responseConfigData.attainedMinimum;
+           attainedMax = _msgLib.selectedStoreData.responseConfigData.attainedMaximum;
+       }
+       else if (_msgLib.flagTloggerConnected){
            data = Utils.StringtoMasShort(_msgLib.storeData.data);
+           attainedMin = _msgLib.storeData.responseConfigData.attainedMinimum;
+           attainedMax = _msgLib.storeData.responseConfigData.attainedMaximum;
+       }
+
 
        if (data==null)
        {
@@ -86,8 +95,8 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
         dataset.setColors(colors);
         chart = v.findViewById(R.id.bar_chart);
         YAxis y = chart.getAxisLeft();
-        y.setAxisMinimum(-50);
-        y.setAxisMaximum(50);
+        y.setAxisMinimum(attainedMin/10-5);
+        y.setAxisMaximum(attainedMax/10+3);
 
         chart.getAxisRight().setDrawGridLines(false);
         chart.getAxisRight().setDrawLabels(false);

@@ -308,7 +308,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         }
 
         byte[] testCmdGetVersion = { 0x46, 0x00, 0x00, 0x00};
+        byte[] testCmdGetResponse = { 0x01, 0x00};
         NdefRecord mimCmdGetVersion = NdefRecord.createMime("n/p", testCmdGetVersion);
+        NdefRecord mimCmdGetResponse = NdefRecord.createMime("n/p", testCmdGetResponse);
+        NdefMessage ndefMessageGetResponse = new NdefMessage(mimCmdGetResponse);
         NdefMessage ndefMessage = cmdHandler.createCmdGetMeasurements((short)0);
         NdefMessage ndefMessageSetConfig = cmdHandler.createCmdSetConfig(msgLib.cmdSetConfig);
         msgLib.measurementsCount = 0;
@@ -317,9 +320,16 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             ndef.connect();
             if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
             ndef.writeNdefMessage(ndefMessage);
+            Log.d(TAG, "write msg");
+            Thread.sleep(300);
             response = ndef.getNdefMessage();
+
+            Log.d(TAG, "read msg");
             NdefRecord[] records1 = response.getRecords();
+
             rsp = new ResponseHandler(msgLib, records1[0]);
+            //ndef.writeNdefMessage(ndefMessageGetResponse);
+
             Log.d(TAG, "write msg");
 
 
@@ -335,7 +345,18 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
             //Добавить запись в БД
             createStoreData();
-            msgLib.storeDataModelList.add(msgLib.storeData);
+            StoreDataModel toListStoreData = null;
+
+            try{
+                toListStoreData = msgLib.storeData.clone();
+
+            }
+            catch (CloneNotSupportedException ex){
+                Log.d(TAG, "can't clone StoreDataModel");
+            }
+
+            
+            msgLib.storeDataModelList.add(toListStoreData);
 
             db = databaseHelper.open();
             databaseHelper.saveDataToDB(db, msgLib.storeData);
@@ -615,7 +636,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         msgLib.storeData.textStatus = msgLib.textStatus;
         msgLib.storeData.statusOfMeasured = msgLib.measuredStatus;
         msgLib.storeData.responseConfigData =  msgLib.rspGetConfig;
-        msgLib.storeData.retrievedCount = msgLib.count;
+        msgLib.storeData.retrievedCount = msgLib.measurementsCount;
         Date currentDate = new Date();
         msgLib.storeData.data = Utils.masShortToString(msgLib.measuredData);
 

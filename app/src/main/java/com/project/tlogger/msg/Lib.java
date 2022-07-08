@@ -19,7 +19,7 @@ public class Lib {
     public int runningTime;
 
     public short count;
-    public byte measurementsCount;
+    public short measurementsCount;
 
     public boolean setConfigurationFlag = false;
 

@@ -177,7 +177,7 @@ public class TemperatureChartFragment extends Fragment {
         String html = "<html><head><title>Title</title></head><body>This is random text.</body></html>";
         //browserChart.loadData(htmlContent, "text/html", "UTF-8");
         //browserChart.loadUrl("file:///android_asset/chart1.html");
-        String htmlText = createChartHtml((float)(validMin/10.0) , (float)(validMax/10.0), (float)(attainedMin/10.0),  (float)(attainedMax/10.0));
+        String htmlText = createChartHtml((float)(validMin/10.0), (float)(validMax/10.0), (float)(attainedMin/10.0),  (float)(attainedMax/10.0));
         browserChart.loadDataWithBaseURL("file:///android_asset/Js/", htmlText, "text/html", "UTF-8", null);
         //browserChart.loadData(htmlContent, "text/html", "UTF-8");
         return view;
@@ -345,7 +345,7 @@ public class TemperatureChartFragment extends Fragment {
 
             nfcId = _msgLib.storeData.nfcId;
             count = _msgLib.storeData.responseConfigData.count;
-            dataTime = String.valueOf(new Timestamp(_msgLib.storeData.responseConfigData.configTime*1000));
+            dataTime = String.valueOf(new Timestamp((long)_msgLib.storeData.responseConfigData.configTime*1000));
             interval = _msgLib.storeData.responseConfigData.interval;
             measurementsCount = _msgLib.storeData.retrievedCount;
             validMin = _msgLib.storeData.responseConfigData.validMinimum;

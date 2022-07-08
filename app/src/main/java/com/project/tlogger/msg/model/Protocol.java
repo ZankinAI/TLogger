@@ -149,7 +149,7 @@ public class Protocol {
         }
     }
 
-    public static class TLOGGER_MSG_RESPONSE_GETCONFIG{
+    public static class TLOGGER_MSG_RESPONSE_GETCONFIG implements Cloneable{
         public int result;
         public int configTime;
         public short interval;
@@ -165,6 +165,10 @@ public class Protocol {
         public int currentTime;
 
         public TLOGGER_MSG_RESPONSE_GETCONFIG(){};
+
+        public TLOGGER_MSG_RESPONSE_GETCONFIG clone() throws CloneNotSupportedException {
+            return (TLOGGER_MSG_RESPONSE_GETCONFIG) super.clone();
+        }
 
     }
 
@@ -227,7 +231,7 @@ public class Protocol {
     public static class TLOGGER_MSG_RESPONSE_GETMEASUREMENTS{
         public int result;
         public short offset;
-        public byte count;
+        public short count;
         public byte zero1;
         public byte zero2;
         public byte zero3;

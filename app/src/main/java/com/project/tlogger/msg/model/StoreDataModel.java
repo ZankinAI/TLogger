@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class StoreDataModel {
+public class StoreDataModel implements Cloneable{
     public Protocol.TLOGGER_MSG_RESPONSE_GETCONFIG responseConfigData;
     public long dataTime;
     public String nfcId;
@@ -36,6 +36,13 @@ public class StoreDataModel {
         this.responseConfigData.status = userCursor.getInt(15);
         this.data = userCursor.getString(16);
 
+    }
+
+    public StoreDataModel clone() throws CloneNotSupportedException{
+        StoreDataModel newStoreDataModel = (StoreDataModel) super.clone();
+        newStoreDataModel.responseConfigData = (Protocol.TLOGGER_MSG_RESPONSE_GETCONFIG) responseConfigData.clone();
+
+        return newStoreDataModel;
     }
 
 

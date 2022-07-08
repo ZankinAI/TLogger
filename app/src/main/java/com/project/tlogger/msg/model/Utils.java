@@ -1,5 +1,7 @@
 package com.project.tlogger.msg.model;
 
+import android.util.Base64;
+
 import java.nio.charset.StandardCharsets;
 
 public class Utils {
@@ -118,13 +120,15 @@ public class Utils {
             temp[i*2] = (byte)(mas[i]&0x00ff);
             temp[i*2+1] = (byte)((mas[i]&0xff00)>>8);
         }
-        result = new String(temp, StandardCharsets.UTF_8);
+        result = new String(temp, StandardCharsets.UTF_16);
+        result = Base64.encodeToString(temp, Base64.DEFAULT);
         return result;
     }
 
     public static short[] StringtoMasShort(String str){
 
-        byte[] temp = str.getBytes(StandardCharsets.UTF_8);
+        //byte[] temp = str.getBytes(StandardCharsets.UTF_16);
+        byte[] temp = Base64.decode(str, Base64.DEFAULT);
         short[] mas = new short[temp.length/2];
         for (int i = 0; i<mas.length ; i++){
             mas[i] = (short) ((temp[i*2]&0xff)|((temp[i*2+1]&0xff)<<8));
