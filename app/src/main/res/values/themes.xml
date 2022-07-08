@@ -19,5 +19,7 @@
         <item name="android:navigationBarColor">#D3F0FD</item>
         <item name="android:windowLightNavigationBar">true</item>
 
+        <item name="android:textColorSecondary">@color/default_blue</item>
+
     </style>
 </resources>

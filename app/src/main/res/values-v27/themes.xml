@@ -5,7 +5,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">#E7F7FF</item>
         <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/default_blue</item>
 
 
         <!-- Secondary brand color. -->
@@ -19,6 +19,39 @@
 
         <item name="android:navigationBarColor">#D3F0FD</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="itemTextAppearance">@style/CustomTextItem</item>
+
+        <item name="android:textColorSecondary">@color/default_blue</item>
+        <item name="android:textColorPrimary">@color/default_blue</item>
+        <item name="actionOverflowButtonStyle">@style/actionButtonOverflow</item>
 
     </style>
+    <style name="CustomTextItem" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="fontFamily">casual</item>
+    </style>
+    <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+
+        <item name="android:buttonBarButtonStyle">@style/Theme.Bottom</item>
+        
+        <item name="colorAccent">@color/default_blue</item>
+
+        <item name="colorPrimary">@color/default_blue</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/default_blue</item>
+
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/default_blue</item>
+        <item name="colorSecondaryVariant">@color/default_blue</item>
+        <item name="colorOnSecondary">@color/default_blue</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+
+        <item name="android:textColorSecondary">@color/default_blue</item>
+    </style>
+    <style name="actionButtonOverflow"   parent="Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:tint">@color/default_blue   </item>
+    </style>
+
 </resources>

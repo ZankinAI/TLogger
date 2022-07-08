@@ -2,6 +2,7 @@ package com.project.tlogger;
 
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.project.tlogger.ui.AppSettings;
 import com.project.tlogger.msg.model.DatabaseHelper;
 import com.project.tlogger.msg.model.StoreDataModel;
 import com.project.tlogger.msg.model.Utils;
@@ -38,6 +42,7 @@ import com.project.tlogger.ui.settings.dialogs.TemperatureRange;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -51,7 +56,7 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements onSomeEventListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
+public class MainActivity extends AppCompatActivity implements onSomeEventListener, AppSettings.ConfirmationListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
     public static Lib msgLib;
     boolean flag = false;
     Tag tag;
@@ -63,14 +68,14 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     private ActivityMainBinding binding;
     private final static String TAG = "NFC Debbug";
     String[] time = {"секунды", "минуты", "часы"};
-    int startMeasurementsTime = 60;
-    int startMeasurementsMeasure = 0;
-    int intervalOfMeasurmentsTime = 15;
-    int intervalOfMeasurmentsMeasure = 0;
-    int endMeasurementsTime = 0;
-    int endMeasurementsMeasure = 0;
-    int lower_range = 20;
-    int upper_range = 35;
+    int startMeasurementsTime;
+    int startMeasurementsMeasure;
+    int intervalOfMeasurmentsTime;
+    int intervalOfMeasurmentsMeasure;
+    int endMeasurementsTime;
+    int endMeasurementsMeasure;
+    int lower_range;
+    int upper_range;
     private static final String TAG2 = "MainActivity";
     public int mInput;
     public NFCStart nfcDialog;
@@ -92,13 +97,20 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
         cmdHandler = new CommandHandler(msgLib);
 
+        startMeasurementsTime = msgLib.cmdSetConfig.startDelay;
+        startMeasurementsMeasure = msgLib.cmdSetConfig.startDelayMeasure;
+        intervalOfMeasurmentsTime = msgLib.cmdSetConfig.interval;
+        intervalOfMeasurmentsMeasure = msgLib.cmdSetConfig.intervalMeasure;
+        endMeasurementsTime = msgLib.cmdSetConfig.runningTime;
+        endMeasurementsMeasure = msgLib.cmdSetConfig.runningTimeMeasure;
+        lower_range = msgLib.cmdSetConfig.validMinimum;
+        upper_range = msgLib.cmdSetConfig.validMaximum;
+
 
         Log.d(TAG, "onStart");
         Intent nfcIntent = new Intent(this, getClass());
         nfcIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         pendingIntent = PendingIntent.getActivity(this,0, nfcIntent,0);
-
-
 
         if (nfcAdapter!=null)
             Toast.makeText(this, "NFC Adapter founded", Toast.LENGTH_SHORT).show();
@@ -136,6 +148,38 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         databaseHelper = new DatabaseHelper(getApplicationContext());
         // создаем базу данных
         databaseHelper.create_db();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+
+        AppSettings dialog = new AppSettings();
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("", false);
+        dialog.setArguments(bundle);
+
+        dialog.show(getSupportFragmentManager(), "custom");
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -355,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 Log.d(TAG, "can't clone StoreDataModel");
             }
 
-            
+
             msgLib.storeDataModelList.add(toListStoreData);
 
             db = databaseHelper.open();
@@ -484,6 +528,22 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
         dialog.show(getSupportFragmentManager(), "custom");
     }
+    /*public void dbClearConfirmation(View v){
+        new AlertDialog.Builder(getactivi)
+                .setTitle("Title")
+                .setMessage("Do you really want to whatever?").show();
+    }*/
+
+    /*public void showDialogAppSettings(View v) {
+
+        AppSettings dialog = new AppSettings();
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("", false);
+        dialog.setArguments(bundle);
+
+        dialog.show(getSupportFragmentManager(), "custom");
+    }*/
 
     public void setConfiguration(View v){
         nfcDialog = new NFCStart();
@@ -644,7 +704,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         msgLib.storeData.dataTime = currentDate.getTime()/1000;
     }
 
+    @Override
+    public void confirmClear() {
+        Log.e("mytag", "cleared");
+    }
 }
-
 
 
