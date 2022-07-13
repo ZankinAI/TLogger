@@ -2,6 +2,7 @@ package com.project.tlogger.ui.temperature.pages;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -52,6 +53,7 @@ public class TemperatureChartFragment extends Fragment {
     private short validMax;
     private short attainedMin;
     private short attainedMax;
+    private int measurementsStatus;
 
 
     public static String  htmlContent =
@@ -128,10 +130,19 @@ public class TemperatureChartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
+        boolean flagStatusNormal = true;
+
+
 
         _msgLib = MainActivity.msgLib;
 
         createDataFragment();
+
+        if ((attainedMax>validMax)||(attainedMin<validMin))
+            flagStatusNormal = false;
+
+        if (measurementsCount == 0)
+            flagStatusNormal = false;
         View view = inflater.inflate(R.layout.temperature_chart_fragment, container, false);
 
         TextView textNfcId = view.findViewById(R.id.nfc_id_text);
@@ -148,23 +159,45 @@ public class TemperatureChartFragment extends Fragment {
         textConfigurationTime.setText(dataTime);
 
         TextView textLoggingFor = view.findViewById(R.id.logging_for_text);
-        String textLoggingForStr = String.valueOf(count * interval);
-        textLoggingForStr +=" сек";
+        String textLoggingForStr = Utils.convertSeconds(count * interval);
         textLoggingFor.setText(textLoggingForStr);
 
         TextView textMeasurements = view.findViewById(R.id.values_count_text);
+        if (!flagStatusNormal) textMeasurements.setTextColor(Color.rgb(255,0,0));
+        else textMeasurements.setTextColor(Color.rgb(7,159,13));
         textMeasurements.setText(String.valueOf(measurementsCount));
 
+        TextView textStatusOfMeasured = view.findViewById(R.id.status_text);
+        if (!flagStatusNormal) textStatusOfMeasured.setTextColor(Color.rgb(255,0,0));
+        else textStatusOfMeasured.setTextColor(Color.rgb(7,159,13));
+        textStatusOfMeasured.setText("OK");
+
+        if ((attainedMax>validMax)||(attainedMin<validMin))
+            textStatusOfMeasured.setText("Выход за пределы");
+
+        if (measurementsCount == 0)
+            textStatusOfMeasured.setText("Нет данных");
+
+
+
+
+
         TextView textMeasurementInterval = view.findViewById(R.id.measurment_intertval_text);
+        if (!flagStatusNormal) textMeasurementInterval.setTextColor(Color.rgb(255,0,0));
+        else textMeasurementInterval.setTextColor(Color.rgb(7,159,13));
         String textMeasurementIntervalStr = String.valueOf(interval) + " сек";
         textMeasurementInterval.setText(textMeasurementIntervalStr);
 
         TextView textMinValid = view.findViewById(R.id.min_valid_text);
-        String textMinValidStr = String.valueOf(validMin/10) + " 'C";
+        if (!flagStatusNormal) textMinValid.setTextColor(Color.rgb(255,0,0));
+        else textMinValid.setTextColor(Color.rgb(7,159,13));
+        String textMinValidStr = String.valueOf(validMin/10) +  "\u2103";
         textMinValid.setText(textMinValidStr);
 
         TextView textMaxValid = view.findViewById(R.id.max_valid_text);
-        String textMaxValidStr = String.valueOf(validMax/10) + " 'C";
+        if (!flagStatusNormal) textMaxValid.setTextColor(Color.rgb(255,0,0));
+        else textMaxValid.setTextColor(Color.rgb(7,159,13));
+        String textMaxValidStr = String.valueOf(validMax/10) + "\u2103";
         textMaxValid.setText(textMaxValidStr);
 
         //saveHtmlFile();
@@ -340,6 +373,7 @@ public class TemperatureChartFragment extends Fragment {
             validMax = _msgLib.selectedStoreData.responseConfigData.validMaximum;
             attainedMin =_msgLib.selectedStoreData.responseConfigData.attainedMinimum;
             attainedMax =_msgLib.selectedStoreData.responseConfigData.attainedMaximum;
+            measurementsStatus = _msgLib.selectedStoreData.statusOfMeasured;
         }
         else if (_msgLib.flagTloggerConnected) {
 
@@ -352,6 +386,7 @@ public class TemperatureChartFragment extends Fragment {
             validMax = _msgLib.storeData.responseConfigData.validMaximum;
             attainedMin =_msgLib.storeData.responseConfigData.attainedMinimum;
             attainedMax =_msgLib.storeData.responseConfigData.attainedMaximum;
+            measurementsStatus = _msgLib.storeData.statusOfMeasured;
 
         }
 

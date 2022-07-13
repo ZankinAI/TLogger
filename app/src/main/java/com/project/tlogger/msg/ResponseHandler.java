@@ -87,9 +87,10 @@ public class ResponseHandler {
             if (Protocol.tloggerIds.get("GETMEASUREMENTS")==header.msgId){
                 Protocol.TLOGGER_MSG_RESPONSE_GETMEASUREMENTS msgResponseGetMeasurements = GetResponseGetMeasurements(mimePayload);
                 lib.measuredStatus = msgResponseGetMeasurements.result;
-                lib.measuredData = new short[msgResponseGetMeasurements.count];
-                lib.measuredData = msgResponseGetMeasurements.data;
+                //lib.measuredData = new short[msgResponseGetMeasurements.count];
+                lib.measuredData = Utils.concatShorts(lib.measuredData, msgResponseGetMeasurements.data);
                 lib.measurementsCount+= msgResponseGetMeasurements.count;
+                lib.currentMeasurementsCount = msgResponseGetMeasurements.count;
                 lib.storeData.retrievedCount = lib.measurementsCount;
 
             }

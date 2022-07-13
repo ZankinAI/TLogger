@@ -104,5 +104,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void removeDateFromDB(SQLiteDatabase db){
+
+        db.delete(TABLE, null, null);
+
+    }
+
+
 
 }

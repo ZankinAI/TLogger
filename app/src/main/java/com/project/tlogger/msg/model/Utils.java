@@ -3,6 +3,7 @@ package com.project.tlogger.msg.model;
 import android.util.Base64;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class Utils {
 
@@ -139,6 +140,60 @@ public class Utils {
 
     }
 
+    public static  short[] concatShorts(short[] first, short[] second) {
+
+        if (((first == null)||(first.length == 0))&&((second == null)||(second.length == 0))) return null;
+
+        if ((first == null)||(first.length == 0)) return second;
+
+        if ((second == null)||(second.length == 0)) return first;
+
+        short[] result = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
+    }
+
+    public static short[] approximation(short[] mas){
+
+        boolean returned = false;
+
+        for (int i=0; i<mas.length; i++){
+            if (mas[i] == 851) {
+                returned = false;
+                for (int k=i; k>=0; k--) {
+                    if (mas[k] < 851) {
+                        mas[i] = mas[k];
+                        returned = true;
+                        break;
+                    }
+                }
+                if (returned) continue;
+                else{
+                    for (int k=i; k<=mas.length; k++) {
+                        if (mas[k] < 851) {
+                            mas[i] = mas[k];
+                            returned = true;
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
+        return mas;
+    }
+
+    public static String convertSeconds (int seconds){
+        String result = null;
+
+        if (seconds<60) result = String.valueOf(seconds) + " сек";
+
+        if ((seconds>=60)&&(seconds<3600)) result = String.valueOf(seconds/60) + " мин " + String.valueOf(seconds % 60) + " сек";
+
+        if (seconds>=3600) result = String.valueOf(seconds/3600) + " час " + String.valueOf(seconds % 3600 / 60) + " мин " + String.valueOf(seconds % 3600 % 60) + " сек";
+
+        return result;
+    }
 
 
 }

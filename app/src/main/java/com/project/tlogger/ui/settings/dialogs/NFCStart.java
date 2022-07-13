@@ -34,7 +34,7 @@ public class NFCStart extends DialogFragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater  inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        MainActivity.msgLib.setConfigurationFlag = true;
+
 
         //Log.d("mytag", "true");
 
@@ -46,11 +46,29 @@ public class NFCStart extends DialogFragment implements View.OnClickListener {
 
         Button btn = view.findViewById(R.id.nfc_start_button);
         if (bundle != null){
-            int error = bundle.getInt("");
 
-            //String textToTextView = bundle.getString("");
-            textView.setText(getTextFromError(error));
-            btn.setText("OK");
+            if (bundle.getInt("from")==0){
+                int error = bundle.getInt("");
+                //String textToTextView = bundle.getString("");
+                textView.setText(getTextFromError(error));
+                btn.setText("OK");
+            }
+            if (bundle.getInt("from")==1){
+                String bundleReset = bundle.getString("reset");
+                textView.setText(bundleReset);;
+                btn.setText("Отмена");
+            }
+
+            if (bundle.getInt("from")==2){
+                int error = bundle.getInt("");
+                if (error==Protocol.MSG_ERR.MSG_OK.getValue()) textView.setText("Настройки датчика сброшены. Данных нет.");
+                else {
+                    textView.setText(getTextFromError(error));
+                }
+                btn.setText("OK");
+            }
+
+
         }
         view.findViewById(R.id.nfc_start_button).setOnClickListener(this);
 
@@ -100,6 +118,7 @@ public class NFCStart extends DialogFragment implements View.OnClickListener {
     @Override
     public void onDestroy(){
         MainActivity.msgLib.setConfigurationFlag = false;
+        MainActivity.msgLib.resetFlag = false;
         //Log.d("mytag", "false");
         super.onDestroy();
     }

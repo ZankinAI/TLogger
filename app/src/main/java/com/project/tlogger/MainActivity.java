@@ -14,6 +14,7 @@ import android.nfc.tech.MifareClassic;
 import android.nfc.tech.MifareUltralight;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor userCursor;
+    CountDownTimer ctimer;
 
 
     @Override
@@ -242,13 +244,29 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     @Override
     protected void onNewIntent(Intent intent) {
 
+
         super.onNewIntent(intent);
         setIntent(intent);
         Log.d(TAG, "onNewIntent");
+        Log.d(TAG, "connected");
+
+        msgLib.flagTloggerCurrentConnect = true;
+
+        ctimer = new CountDownTimer(1000, 100){
 
 
+            @Override
+            public void onTick(long l) {
+                Log.d(TAG, " все еще connected");
+            }
 
-
+            @Override
+            public void onFinish() {
+                Log.d(TAG, "disconnected");
+                msgLib.flagTloggerCurrentConnect = false;
+                ctimer.cancel();
+            }
+        }.start();
 
         ResponseHandler rsp;
         if (msgLib.setConfigurationFlag){
@@ -264,14 +282,13 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             }
             nfcDialogEvent = new NFCStart();
             Bundle bundle = new Bundle();
-            //bundle.putString("", "Hello");
-
 
             Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             msgLib.cmdSetConfig.currentTime = (int)(timestamp.getTime()/1000);
 
             NdefMessage ndefMessageSetConfig = cmdHandler.createCmdSetConfig(msgLib.cmdSetConfig);
+
 
             try {
                 ndef.connect();
@@ -288,12 +305,67 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             catch (Exception e){
                 Log.d(TAG, "no connect");
             }
+            bundle.putInt("from",0);
             bundle.putInt("",msgLib.msgErr.getValue());
             nfcDialogEvent.setArguments(bundle);
             nfcDialogEvent.show(getSupportFragmentManager(), "custom");
             msgLib.setConfigurationFlag = false;
+            msgLib.flagTloggerCurrentConnect = false;
             return;
+        }
 
+
+        if (msgLib.resetFlag){
+
+            if( nfcDialog!=null) {
+                //if (nfcDialog.isVisible()) {
+                nfcDialog.dismiss();
+                //}
+            }
+            if(nfcDialogEvent!=null)
+            {
+                nfcDialogEvent.dismiss();
+            }
+            nfcDialogEvent = new NFCStart();
+            Bundle bundle = new Bundle();
+
+            Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            msgLib.cmdSetConfig.currentTime = (int)(timestamp.getTime()/1000);
+
+            Protocol.TLOGGER_MSG_CMD_SETCONFIG reset = new Protocol.TLOGGER_MSG_CMD_SETCONFIG();
+            reset.interval = 0;
+            reset.startDelay = 0;
+            reset.runningTime = 0;
+            Date currentDate = new Date();
+            reset.currentTime = (int)currentDate.getTime()/1000;
+            reset.validMaximum = 0;
+            reset.validMinimum = 0;
+
+            NdefMessage ndefMessageReset = cmdHandler.createCmdSetConfig(reset);
+
+            try {
+                ndef.connect();
+                if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
+                ndef.writeNdefMessage(ndefMessageReset);
+                NdefMessage response;
+                response = ndef.getNdefMessage();
+                NdefRecord[] records1 = response.getRecords();
+                rsp = new ResponseHandler(msgLib, records1[0]);
+                Log.d(TAG, "write msg");
+                ndef.close();
+
+            }
+            catch (Exception e){
+                Log.d(TAG, "no connect");
+            }
+            bundle.putInt("from",2);
+            bundle.putInt("",msgLib.msgErr.getValue());
+            nfcDialogEvent.setArguments(bundle);
+            nfcDialogEvent.show(getSupportFragmentManager(), "custom");
+            msgLib.setConfigurationFlag = false;
+            msgLib.flagTloggerCurrentConnect = false;
+            return;
         }
         msgLib.flagTloggerConnected = true;
 
@@ -350,40 +422,60 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
 
         }
+        else{
+            return;
+        }
 
         byte[] testCmdGetVersion = { 0x46, 0x00, 0x00, 0x00};
         byte[] testCmdGetResponse = { 0x01, 0x00};
         NdefRecord mimCmdGetVersion = NdefRecord.createMime("n/p", testCmdGetVersion);
         NdefRecord mimCmdGetResponse = NdefRecord.createMime("n/p", testCmdGetResponse);
         NdefMessage ndefMessageGetResponse = new NdefMessage(mimCmdGetResponse);
-        NdefMessage ndefMessage = cmdHandler.createCmdGetMeasurements((short)0);
+        NdefMessage ndefCmdGetMeasurements = cmdHandler.createCmdGetMeasurements((short)0);
         NdefMessage ndefMessageSetConfig = cmdHandler.createCmdSetConfig(msgLib.cmdSetConfig);
         msgLib.measurementsCount = 0;
+        msgLib.measuredData = null;
+        short offset = 0;
         NdefMessage response;
-        try {
-            ndef.connect();
-            if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
-            ndef.writeNdefMessage(ndefMessage);
-            Log.d(TAG, "write msg");
-            Thread.sleep(300);
-            response = ndef.getNdefMessage();
 
-            Log.d(TAG, "read msg");
-            NdefRecord[] records1 = response.getRecords();
-
-            rsp = new ResponseHandler(msgLib, records1[0]);
-            //ndef.writeNdefMessage(ndefMessageGetResponse);
-
-            Log.d(TAG, "write msg");
+        int count = 0;
 
 
-            ndef.close();
+        while (msgLib.flagTloggerCurrentConnect){
+
+            ndefCmdGetMeasurements = cmdHandler.createCmdGetMeasurements(offset);
+            msgLib.currentMeasurementsCount = 0;
+            count++;
+            if (count>100) {
+                break;
+            }
+
+            try {
+                ndef.connect();
+                if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
+                ndef.writeNdefMessage(ndefCmdGetMeasurements);
+                Log.d(TAG, "write msg");
+                Thread.sleep(25);
+                response = ndef.getNdefMessage();
+                Log.d(TAG, "read msg");
+                NdefRecord[] records1 = response.getRecords();
+                rsp = new ResponseHandler(msgLib, records1[0]);
+                offset+=msgLib.currentMeasurementsCount;
+                Log.d(TAG, "write msg");
+                ndef.close();
+
+            }
+            catch (Exception e){
+                Log.d(TAG, "no connect");
+
+            }
+
+            if ((offset>=msgLib.count)||(msgLib.currentMeasurementsCount==0)) break;
+
 
         }
-        catch (Exception e){
-            Log.d(TAG, "no connect");
 
-        }
+
 
         if (msgLib.flagStandartMessageReceive){
 
@@ -546,6 +638,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     }*/
 
     public void setConfiguration(View v){
+        msgLib.setConfigurationFlag = true;
         nfcDialog = new NFCStart();
         nfcDialog.show(getSupportFragmentManager(), "custom");
 
@@ -556,6 +649,20 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     }
 
     public void resetTag(View v){
+
+        if( nfcDialog!=null) {
+            //if (nfcDialog.isVisible()) {
+            nfcDialog.dismiss();
+            //}
+        }
+
+        msgLib.resetFlag = true;
+        nfcDialog = new NFCStart();
+        Bundle bundle = new Bundle();
+        bundle.putInt("from",1);
+        bundle.putString("reset", "Режим сброса запущен. Приложите устройство к датчику");
+        nfcDialog.setArguments(bundle);
+        nfcDialog.show(getSupportFragmentManager(), "custom");
 
     }
 
@@ -706,6 +813,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
     @Override
     public void confirmClear() {
+        db = databaseHelper.open();
+        databaseHelper.removeDateFromDB(db);
+        db.close();
+        msgLib.storeDataModelList.clear();
         Log.e("mytag", "cleared");
     }
 }

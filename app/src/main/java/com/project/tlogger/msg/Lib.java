@@ -20,12 +20,15 @@ public class Lib {
 
     public short count;
     public short measurementsCount;
+    public short currentMeasurementsCount;
 
     public boolean setConfigurationFlag = false;
+    public boolean resetFlag = false;
 
     public short[] measuredData;
 
     public boolean flagTloggerConnected;
+    public boolean flagTloggerCurrentConnect;
     public boolean flagOpenFragmentFromHistory;
     public boolean flagStandartMessageReceive;
     public boolean flagReadFromDB;
@@ -59,6 +62,7 @@ public class Lib {
         this.textStatus = " ";
         this.apiVersion = "n.a.";
         this.mimeType = "MIME type: n.a.";
+        this.flagTloggerCurrentConnect = false;
         this.flagTloggerConnected = false;
         this.flagOpenFragmentFromHistory = false;
         this.flagStandartMessageReceive = false;
