@@ -20,7 +20,7 @@
         android:layout_marginTop="35dp"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="Режим конфигурации запущен. Приложите устройство к датчику."
+        android:text="@string/config_mode_start"
         android:textColor="@color/default_blue"
         android:textSize="16sp" />
 
@@ -33,6 +33,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="25dp"
-        android:text="ОТМЕНА" />
+        android:text="@string/cancel_btn" />
 </RelativeLayout>
 

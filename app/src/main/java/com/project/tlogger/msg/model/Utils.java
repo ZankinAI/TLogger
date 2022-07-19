@@ -1,6 +1,11 @@
 package com.project.tlogger.msg.model;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Base64;
+
+import com.project.tlogger.MainActivity;
+import com.project.tlogger.R;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -183,15 +188,11 @@ public class Utils {
         return mas;
     }
 
-    public static String convertSeconds (int seconds){
-        String result = null;
-
-        if (seconds<60) result = String.valueOf(seconds) + " сек";
-
-        if ((seconds>=60)&&(seconds<3600)) result = String.valueOf(seconds/60) + " мин " + String.valueOf(seconds % 60) + " сек";
-
-        if (seconds>=3600) result = String.valueOf(seconds/3600) + " час " + String.valueOf(seconds % 3600 / 60) + " мин " + String.valueOf(seconds % 3600 % 60) + " сек";
-
+    public static String convertSeconds (int seconds, Context context){
+        String result = "hui";
+        if (seconds<60) result = String.valueOf(seconds) + " " + context.getResources().getString(R.string.second);
+        if ((seconds>=60)&&(seconds<3600)) result = String.valueOf(seconds/60) + " " +context.getResources().getString(R.string.minute) + " " + String.valueOf(seconds % 60) + " " + context.getResources().getString(R.string.second);
+        if (seconds>=3600) result = String.valueOf(seconds/3600) + " " +context.getResources().getString(R.string.hour) + " " + String.valueOf(seconds % 3600 / 60) + " " +context.getResources().getString(R.string.minute) + " " + String.valueOf(seconds % 3600 % 60) + " " + context.getResources().getString(R.string.second);
         return result;
     }
 

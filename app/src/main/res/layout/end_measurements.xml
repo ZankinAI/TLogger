@@ -20,7 +20,7 @@
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="Длительность измерений"
+        android:text="@string/window_duration_title"
         android:textColor="@color/default_blue"
         android:textSize="15dp" />
 
@@ -50,7 +50,7 @@
         android:layout_alignTop="@id/rectimage1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25sp"
-        android:text="ДО ЗАПОЛНЕНИЯ ПАМЯТИ" />
+        android:text="@string/window_duration_btn_untilsorage" />
 
     <ImageView
         android:id="@+id/rectimage2"
@@ -114,6 +114,6 @@
         android:layout_alignRight="@id/rectimage2"
         android:layout_marginRight="45dp"
         android:layout_marginBottom="10dp"
-        android:text="ОТМЕНА"/>
+        android:text="@string/cancel_btn" />
 </RelativeLayout>
 

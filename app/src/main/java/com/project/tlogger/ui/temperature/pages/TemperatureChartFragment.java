@@ -2,6 +2,7 @@ package com.project.tlogger.ui.temperature.pages;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -35,6 +36,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import kotlin.text.UStringsKt;
 
@@ -143,7 +145,7 @@ public class TemperatureChartFragment extends Fragment {
 
         if (measurementsCount == 0)
             flagStatusNormal = false;
-        View view = inflater.inflate(R.layout.temperature_chart_fragment, container, false);
+        View view = inflater.inflate(R.layout.temperature_chart_fragment_adaptive, container, false);
 
         TextView textNfcId = view.findViewById(R.id.nfc_id_text);
         textNfcId.setText(nfcId);
@@ -158,14 +160,39 @@ public class TemperatureChartFragment extends Fragment {
         TextView textConfigurationTime = view.findViewById(R.id.configuration_time_text);
         textConfigurationTime.setText(dataTime);
 
+        Locale locale = new Locale("ru"); ;
+
+        if (_msgLib.language == 1) locale = new Locale("ru");
+        if (_msgLib.language == 2) locale = new Locale("en");
+
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getActivity().getBaseContext().getResources().updateConfiguration(configuration,getActivity().getBaseContext().getResources().getDisplayMetrics());
+
         TextView textLoggingFor = view.findViewById(R.id.logging_for_text);
-        String textLoggingForStr = Utils.convertSeconds(count * interval);
+        String textLoggingForStr = Utils.convertSeconds(count * interval, getContext());
         textLoggingFor.setText(textLoggingForStr);
 
         TextView textMeasurements = view.findViewById(R.id.values_count_text);
         if (!flagStatusNormal) textMeasurements.setTextColor(Color.rgb(255,0,0));
         else textMeasurements.setTextColor(Color.rgb(7,159,13));
-        textMeasurements.setText(String.valueOf(measurementsCount));
+        textMeasurements.setText(String.valueOf(measurementsCount) + " ");
+
+        TextView textMeasurementsLabel = view.findViewById(R.id.values_count);
+        textMeasurementsLabel.setText(getResources().getString(R.string.chart_measurements_count));
+
+        TextView textStatusLabel = view.findViewById(R.id.status);
+        textStatusLabel.setText(getResources().getString(R.string.chart_measured_status));
+
+        TextView textMeasurementsIntervalLabel = view.findViewById(R.id.measurment_intertval);
+        textMeasurementsIntervalLabel.setText(getResources().getString(R.string.chart_interval));
+
+        TextView minValidLabelLabel = view.findViewById(R.id.min_valid_label);
+        minValidLabelLabel.setText(getResources().getString(R.string.chart_validMin));
+
+        TextView maxValidLabelLabel = view.findViewById(R.id.max_valid_label);
+        maxValidLabelLabel.setText(getResources().getString(R.string.chart_validMax));
 
         TextView textStatusOfMeasured = view.findViewById(R.id.status_text);
         if (!flagStatusNormal) textStatusOfMeasured.setTextColor(Color.rgb(255,0,0));
@@ -173,38 +200,34 @@ public class TemperatureChartFragment extends Fragment {
         textStatusOfMeasured.setText("OK");
 
         if ((attainedMax>validMax)||(attainedMin<validMin))
-            textStatusOfMeasured.setText("Выход за пределы");
+            textStatusOfMeasured.setText(R.string.chart_limit);
 
         if (measurementsCount == 0)
-            textStatusOfMeasured.setText("Нет данных");
-
-
-
+            textStatusOfMeasured.setText(R.string.chart_no_data);
 
 
         TextView textMeasurementInterval = view.findViewById(R.id.measurment_intertval_text);
         if (!flagStatusNormal) textMeasurementInterval.setTextColor(Color.rgb(255,0,0));
         else textMeasurementInterval.setTextColor(Color.rgb(7,159,13));
-        String textMeasurementIntervalStr = String.valueOf(interval) + " сек";
+        String textMeasurementIntervalStr = " " + Utils.convertSeconds(interval, getContext());
         textMeasurementInterval.setText(textMeasurementIntervalStr);
 
         TextView textMinValid = view.findViewById(R.id.min_valid_text);
         if (!flagStatusNormal) textMinValid.setTextColor(Color.rgb(255,0,0));
         else textMinValid.setTextColor(Color.rgb(7,159,13));
-        String textMinValidStr = String.valueOf(validMin/10) +  "\u2103";
+        String textMinValidStr = " " + String.valueOf(validMin/10) +  "\u2103";
         textMinValid.setText(textMinValidStr);
 
         TextView textMaxValid = view.findViewById(R.id.max_valid_text);
         if (!flagStatusNormal) textMaxValid.setTextColor(Color.rgb(255,0,0));
         else textMaxValid.setTextColor(Color.rgb(7,159,13));
-        String textMaxValidStr = String.valueOf(validMax/10) + "\u2103";
+        String textMaxValidStr = " " + String.valueOf(validMax/10) + "\u2103";
         textMaxValid.setText(textMaxValidStr);
 
         //saveHtmlFile();
 
         WebView browserChart=view.findViewById(R.id.webview_chart);
         WebSettings webSettings = browserChart.getSettings();
-
 
         webSettings.setJavaScriptEnabled(true);
         String html = "<html><head><title>Title</title></head><body>This is random text.</body></html>";
@@ -218,6 +241,10 @@ public class TemperatureChartFragment extends Fragment {
 
     private String createChartHtml(float validMin, float validMax, float attainedMin, float attainedMax){
 
+
+        String low = getResources().getString(R.string.chart_low);
+        String normal = getResources().getString(R.string.chart_normal);
+        String high = getResources().getString(R.string.chart_high);
         boolean addTrandPoints = true;
 
         final float  MinLimit = -40.0f;
@@ -235,7 +262,6 @@ public class TemperatureChartFragment extends Fragment {
         float recMax = attainedMax;
 
         if (recMin*10 == 32767) {
-
             recMin = configMin;
         }
         if (recMax*10 == -32768){
@@ -255,7 +281,7 @@ public class TemperatureChartFragment extends Fragment {
 
         String trendPoint;
         if (addTrandPoints){
-            trendPoint =                 "\"trendPoints\": {\n" +
+            trendPoint = "\"trendPoints\": {\n" +
                     "\"point\": [\n" +
                     "{\n"+
                     "\"startValue\": \""+String.valueOf(recMin)+"\",\n"+
@@ -287,7 +313,7 @@ public class TemperatureChartFragment extends Fragment {
 
         }else trendPoint = "";
 
-        String htmlChart =  "<html>\n" +
+        String htmlChart =  "<html lang=\"en\" >\n" +
                 "<head>\n" +
                 "<script type=\"text/javascript\" src=\"fusioncharts.js\"></script>" +
                 "<meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1'/>\n" +
@@ -325,17 +351,17 @@ public class TemperatureChartFragment extends Fragment {
                 "\"color\": [{\n" +
                 "\"minValue\": \""+String.valueOf(minLimit)+"\",\n"+
                 "\"maxValue\": \""+String.valueOf(configMin)+"\",\n"+
-                "\"label\": \"Низкая\",\n"+
+                "\"label\": \""+low+"\",\n"+
                 "\"code\": \"#f59842\",\n"+
                 "},{\n"+
                 "\"minValue\": \""+String.valueOf(configMin)+"\",\n"+
                 "\"maxValue\": \""+String.valueOf(configMax)+"\",\n"+
-                "\"label\": \"Допустимая\",\n"+
+                "\"label\": \""+normal+"\",\n"+
                 "\"code\": \"#4290f5\",\n"+
                 "},{\n"+
                 "\"minValue\": \""+String.valueOf(configMax)+"\",\n"+
                 "\"maxValue\": \""+String.valueOf(maxLimit)+"\",\n"+
-                "\"label\": \"Высокая\",\n"+
+                "\"label\": \""+high+"\",\n"+
                 "\"code\": \"#f59842\",\n"+
                 "}]\n"+
                 "},\n" +

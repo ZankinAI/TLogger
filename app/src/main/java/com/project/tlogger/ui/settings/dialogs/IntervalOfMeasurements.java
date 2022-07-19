@@ -79,9 +79,10 @@ public class IntervalOfMeasurements extends DialogFragment implements View.OnCli
     @Override
     public void onClick(View view) {
 
+        String textToInt = etext.getText().toString().trim();
         switch (view.getId()) {
             case R.id.interval_of_measurements_button_ok:
-                if (etext != null){
+                if  (!textToInt.equals("")){
                     int text = Integer.valueOf(etext.getText().toString().trim());
                     MainActivity.msgLib.cmdSetConfig.interval = text;
                     int textSpinner = espinner.getSelectedItemPosition();

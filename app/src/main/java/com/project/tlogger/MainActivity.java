@@ -1,9 +1,11 @@
 package com.project.tlogger;
 
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.nfc.NdefMessage;
@@ -21,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +46,6 @@ import com.project.tlogger.ui.settings.dialogs.TemperatureRange;
 import com.project.tlogger.ui.history.HistoryFragment.onSomeEventListener;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -52,13 +54,13 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.project.tlogger.databinding.ActivityMainBinding;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Base64;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements onSomeEventListener, AppSettings.ConfirmationListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
     public static Lib msgLib;
+    private static Context mContext;
     boolean flag = false;
     Tag tag;
     private NfcAdapter nfcAdapter;
@@ -88,11 +90,16 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     Cursor userCursor;
     CountDownTimer ctimer;
 
+    ProgressDialog pd;
+
+    public static final String APP_PREFERENCES = "TsenseSettings";
+    public static final String APP_LANGUAGE = "language";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mContext = this;
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         msgLib = new Lib();
@@ -108,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         lower_range = msgLib.cmdSetConfig.validMinimum;
         upper_range = msgLib.cmdSetConfig.validMaximum;
 
+        LoadPreferences();
 
         Log.d(TAG, "onStart");
         Intent nfcIntent = new Intent(this, getClass());
@@ -120,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             Toast.makeText(this, "NFC Adapter not founded", Toast.LENGTH_SHORT).show();
 
 
+        LoadPreferences();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -208,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         MainActivity.msgLib.flagOpenFragmentFromHistory = false;
         String nfcid = "gfg";
         String status = "gfgfg";
+        LoadPreferences();
 
         if (!msgLib.flagReadFromDB){
             StoreDataModel temp;
@@ -235,10 +245,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         }
 
 
-        if (nfcAdapter!=null)
+        if (nfcAdapter!=null)        {
             if (!nfcAdapter.isEnabled())
                 Log.d(TAG, "not Enable NFS");
-            nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);}
     }
 
     @Override
@@ -338,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
             reset.startDelay = 0;
             reset.runningTime = 0;
             Date currentDate = new Date();
-            reset.currentTime = (int)currentDate.getTime()/1000;
+            reset.currentTime = (int)(currentDate.getTime()/1000);
             reset.validMaximum = 0;
             reset.validMinimum = 0;
 
@@ -369,6 +379,8 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         }
         msgLib.flagTloggerConnected = true;
 
+        if (intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)==null) return;
+
         Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
         navController.navigate( R.id.navigation_temperature);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
@@ -379,8 +391,6 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 Log.d(TAG, "myTag is not null");
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage[] msgs;
-
-
 
             if (rawMsgs!=null){
 
@@ -439,41 +449,52 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         NdefMessage response;
 
         int count = 0;
+        if (msgLib.count>0){
+            Toast.makeText(this, "Загрузка пакета из " + String.valueOf(msgLib.count) + " значений температуры" , Toast.LENGTH_SHORT).show();
+
+            while (msgLib.flagTloggerCurrentConnect){
+
+                ndefCmdGetMeasurements = cmdHandler.createCmdGetMeasurements(offset);
+                msgLib.currentMeasurementsCount = 0;
+                count++;
+                if (count>100) {
+                    break;
+                }
+
+                try {
+                    ndef.connect();
+                    if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
+                    ndef.writeNdefMessage(ndefCmdGetMeasurements);
+                    Log.d(TAG, "write msg");
+                    Thread.sleep(200);
+                    response = ndef.getNdefMessage();
+                    Log.d(TAG, "read msg");
+                    NdefRecord[] records1 = response.getRecords();
+                    rsp = new ResponseHandler(msgLib, records1[0]);
+                    offset+=msgLib.currentMeasurementsCount;
+
+                    Log.d(TAG, "write msg");
+                    ndef.close();
 
 
-        while (msgLib.flagTloggerCurrentConnect){
+                }
+                catch (Exception e){
+                    Log.d(TAG, "no connect");
 
-            ndefCmdGetMeasurements = cmdHandler.createCmdGetMeasurements(offset);
-            msgLib.currentMeasurementsCount = 0;
-            count++;
-            if (count>100) {
-                break;
+                }
+
+                if ((offset>=msgLib.count)||(msgLib.currentMeasurementsCount==0)) break;
+
+
             }
 
-            try {
-                ndef.connect();
-                if (ndef.isConnected()) Log.d(TAG, "connected ready to write");
-                ndef.writeNdefMessage(ndefCmdGetMeasurements);
-                Log.d(TAG, "write msg");
-                Thread.sleep(25);
-                response = ndef.getNdefMessage();
-                Log.d(TAG, "read msg");
-                NdefRecord[] records1 = response.getRecords();
-                rsp = new ResponseHandler(msgLib, records1[0]);
-                offset+=msgLib.currentMeasurementsCount;
-                Log.d(TAG, "write msg");
-                ndef.close();
-
-            }
-            catch (Exception e){
-                Log.d(TAG, "no connect");
-
-            }
-
-            if ((offset>=msgLib.count)||(msgLib.currentMeasurementsCount==0)) break;
+            Toast.makeText(this, "Получено "+offset+" значений из " + msgLib.count  , Toast.LENGTH_SHORT).show();
 
 
         }
+
+
+
 
 
 
@@ -660,10 +681,54 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         nfcDialog = new NFCStart();
         Bundle bundle = new Bundle();
         bundle.putInt("from",1);
-        bundle.putString("reset", "Режим сброса запущен. Приложите устройство к датчику");
+        bundle.putString("reset", getResources().getString(R.string.reset_mode_start));
         nfcDialog.setArguments(bundle);
         nfcDialog.show(getSupportFragmentManager(), "custom");
 
+
+
+
+    }
+
+    public static Context getContext(){
+        return mContext;
+    }
+
+    public void onRadioButtonClicked(View view) {
+        // если переключатель отмечен
+        boolean checked = ((RadioButton) view).isChecked();
+
+
+        // Получаем нажатый переключатель
+        switch(view.getId()) {
+            case R.id.app_settings_ru:
+                if (checked){
+                    Toast.makeText(this, "Выбран русский язык", Toast.LENGTH_SHORT).show();
+                    /*Locale locale = new Locale("ru");
+                    Locale.setDefault(locale);
+                    Configuration configuration = new Configuration();
+                    configuration.locale = locale;
+                    getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());*/
+                    msgLib.language = 1;
+                    SavePreferences(APP_LANGUAGE,msgLib.language);
+                    this.recreate();
+
+                }
+                break;
+            case R.id.app_settings_en:
+                if (checked){
+                    Toast.makeText(this, "Selected English Language", Toast.LENGTH_SHORT).show();
+                   /* Locale locale = new Locale("en");
+                    Locale.setDefault(locale);
+                    Configuration configuration = new Configuration();
+                    configuration.locale = locale;
+                    getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());*/
+                    msgLib.language = 2;
+                    SavePreferences(APP_LANGUAGE,msgLib.language);
+                    this.recreate();
+                }
+                break;
+        }
     }
 
 
@@ -704,27 +769,27 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 switch (time) {
                     case 0:
                         if (number == 0)
-                        {textView.setText("Начать измерения немедленно");}
+                        {textView.setText(R.string.settings_delay_immediat);}
                         else if (number <= 60)
-                        {textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));}
+                        {textView.setText(getResources().getString(R.string.settings_delay_no_immediat)+" " + getResources().getQuantityString(timeMeasure[time], number, number));}
                         else
-                        {textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
+                        {textView.setText(getResources().getString(R.string.settings_delay_no_immediat)+" " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
                         break;
                     case 1:
                         if (number == 0)
-                        {textView.setText("Начать измерения немедленно");}
+                        {textView.setText(R.string.settings_delay_immediat);}
                         else if (number <= 60)
-                            textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+                            textView.setText(getResources().getString(R.string.settings_delay_no_immediat)+" " + getResources().getQuantityString(timeMeasure[time], number, number));
                         else
-                            textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                            textView.setText(getResources().getString(R.string.settings_delay_no_immediat)+" " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
                         break;
                     case 2:
                         if (number == 0)
-                        {textView.setText("Начать измерения немедленно");}
-                        else textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        {textView.setText(R.string.settings_delay_immediat);}
+                        else textView.setText(getResources().getString(R.string.settings_delay_no_immediat)+" " + getResources().getQuantityString(timeMeasure[time], number, number));
                         break;
                     case 3:
-                        textView.setText("Начать измерения немедленно");
+                        textView.setText(R.string.settings_delay_immediat);
                         startMeasurementsMeasure = 0;
                         break;
                 }
@@ -734,27 +799,27 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 switch (time) {
                     case 0:
                         if (number == 0)
-                        {textView.setText("Периодичность измерений: 1 секунда");}
+                        {textView.setText(R.string.settings_interval_default);}
                         else if (number <= 60)
-                        {textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[time], number, number));}
+                        {textView.setText(getResources().getString(R.string.settings_duration_time) + " "+ getResources().getQuantityString(timeMeasure[time], number, number));}
                         else
-                        {textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
+                        {textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
                         break;
                     case 1:
                         if (number == 0)
-                        {textView.setText("Периодичность измерений: 1 секунда");}
+                        {textView.setText(R.string.settings_interval_default);}
                         else if (number <= 60)
-                            textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[time], number, number));
+                            textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[time], number, number));
                         else
-                            textView.setText("Периодичность измерений: " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                            textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
                         break;
                     case 2:
                         if (number == 0)
-                        {textView.setText("Периодичность измерений: 1 секунда");}
-                        else textView.setText("Начать измерения через " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        {textView.setText(R.string.settings_interval_default);}
+                        else textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[time], number, number));
                         break;
                     case 3:
-                        textView.setText("Начать измерения немедленно");
+                        textView.setText(R.string.settings_interval_default);
                         intervalOfMeasurmentsMeasure = 0;
                         break;
                 }
@@ -764,34 +829,34 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 switch (time) {
                     case 0:
                         if (number == 0)
-                        {textView.setText("Измерять, пока не закончится память");}
+                        {textView.setText(R.string.settings_duration_full);}
                         else if (number <= 60)
-                        {textView.setText("Продолжать измерения: " + getResources().getQuantityString(timeMeasure[time], number, number));}
+                        {textView.setText(getResources().getString(R.string.settings_duration_time) + " "  + getResources().getQuantityString(timeMeasure[time], number, number));}
                         else
-                        {textView.setText("Продолжать измерения: " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
+                        {textView.setText(getResources().getString(R.string.settings_duration_time) + " "  + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
                         break;
                     case 1:
                         if (number == 0)
-                        {textView.setText("Измерять, пока не закончится память");}
+                        {textView.setText(R.string.settings_duration_full);}
                         else if (number <= 60)
-                            textView.setText("Продолжать измерения: " + getResources().getQuantityString(timeMeasure[time], number, number));
+                            textView.setText(getResources().getString(R.string.settings_duration_time) + " "  + getResources().getQuantityString(timeMeasure[time], number, number));
                         else
-                            textView.setText("Продолжать измеренияПериодичность измерений: " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                            textView.setText(getResources().getString(R.string.settings_duration_time) + " "  + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
                         break;
                     case 2:
                         if (number == 0)
-                        {textView.setText("Измерять, пока не закончится память");}
-                        else textView.setText("Продолжать измерения " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        {textView.setText(R.string.settings_duration_full);}
+                        else textView.setText(getResources().getString(R.string.settings_duration_time) + " "  + getResources().getQuantityString(timeMeasure[time], number, number));
                         break;
                     case 3:
-                        textView.setText("Измерять, пока не закончится память");
+                        textView.setText(R.string.settings_duration_full);
                         endMeasurementsMeasure = 0;
                         break;
                 }
                 break;
             case 3:
                 textView = findViewById(R.id.text_temperature_limits);
-                textView.setText("Границы измерения: от " + number + " °C до " + time + " °C");
+                textView.setText(getResources().getString(R.string.settings_desired_temperature_part1) + " " + lower_range/10 + " °C " + getResources().getString(R.string.settings_desired_temperature_part2) +" "+ upper_range/10 + " °C");;
                 break;
 
         }
@@ -819,6 +884,33 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         msgLib.storeDataModelList.clear();
         Log.e("mytag", "cleared");
     }
+
+
+    private void SavePreferences(String key, int value) {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    private void LoadPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        msgLib.language = (byte)sharedPreferences.getInt(
+                APP_LANGUAGE, 0);
+        Locale locale = new Locale("ru"); ;
+
+        if (msgLib.language == 1) locale = new Locale("ru");
+        if (msgLib.language == 2) locale = new Locale("en");
+
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());
+
+    }
+
 }
 
 

@@ -47,11 +47,11 @@ public class TemperatureRange extends DialogFragment implements View.OnClickList
 
         lower_range = view.findViewById(R.id.lower_range);
 
-        lower_range.setText(Integer.toString(temperatureRangeToTextView[0]));
+        lower_range.setText(Integer.toString(temperatureRangeToTextView[0]/10));
 
         upper_range = view.findViewById(R.id.upper_range);
 
-        upper_range.setText(Integer.toString(temperatureRangeToTextView[1]));
+        upper_range.setText(Integer.toString(temperatureRangeToTextView[1]/10));
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -87,9 +87,11 @@ public class TemperatureRange extends DialogFragment implements View.OnClickList
     @Override
     public void onClick(View view) {
 
+        String lower_rangeToInt = lower_range.getText().toString().trim();
+        String upper_rangeToInt = upper_range.getText().toString().trim();
         switch (view.getId()) {
             case R.id.temperature_range_button_ok:
-                if (lower_range != null && upper_range != null){
+                if  (!lower_rangeToInt.equals("")&&!upper_range.equals("")){
                     int lower_range_send = Integer.valueOf(lower_range.getText().toString().trim());
                     int upper_range_send = Integer.valueOf(upper_range.getText().toString().trim());
                     if (lower_range_send > upper_range_send){
@@ -99,7 +101,7 @@ public class TemperatureRange extends DialogFragment implements View.OnClickList
                     }
                     MainActivity.msgLib.cmdSetConfig.validMinimum = lower_range_send*10;
                     MainActivity.msgLib.cmdSetConfig.validMaximum = upper_range_send*10;
-                    mOnInputListener.sendInput(3, lower_range_send, upper_range_send);
+                    mOnInputListener.sendInput(3, lower_range_send*10, upper_range_send*10);
 
                 }
                 else {

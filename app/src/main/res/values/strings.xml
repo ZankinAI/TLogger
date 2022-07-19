@@ -3,32 +3,106 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_temperature">Температура</string>
-    <string name="title_history">История</string>
-    <string name="title_settings">Настройки</string>
-    <string name="title_about">О программе</string>
+    <string name="title_temperature">ACTIVE CONFIGURATION</string>
+    <string name="title_history">HISTORY</string>
+    <string name="title_settings">SETTINGS</string>
+    <string name="title_about">ABOUT</string>
+
     <string-array name="time">
-        <item>секунд</item>
-        <item>минут</item>
-        <item>часов</item>
+        <item>seconds</item>
+        <item>minutes</item>
+        <item>hours</item>
     </string-array>
 
     <plurals name="minuits_plural">
-        <item quantity="one">%d минуту</item>
-        <item quantity="few">%d минуты</item>
-        <item quantity="many">%d минут</item>
+        <item quantity="one">%d minute</item>
+        <item quantity="few">%d minutes</item>
+        <item quantity="many">%d minutes</item>
+        <item quantity="other">%d minutes</item>
     </plurals>
 
     <plurals name="seconds_plural">
-        <item quantity="one">%d секунду</item>
-        <item quantity="few">%d секунды</item>
-        <item quantity="many">%d секунд</item>
+        <item quantity="one">%d second</item>
+        <item quantity="few">%d seconds</item>
+        <item quantity="many">%d seconds</item>
+        <item quantity="other">%d seconds</item>
     </plurals>
 
     <plurals name="hours_plural">
-        <item quantity="one">%d час</item>
-        <item quantity="few">%d часа</item>
-        <item quantity="many">%d часов</item>
+        <item quantity="one">%d hour</item>
+        <item quantity="few">%d hours</item>
+        <item quantity="many">%d hours</item>
+        <item quantity="other">%d hours</item>
     </plurals>
+
+    <string name="export_button_name">EXPORT</string>
+    <string name="menu_temperature">Temperature</string>
+    <string name="menu_history">History</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="settings_delay_no_immediat">Start measuring in</string>
+    <string name="settings_interval">Measure every</string>
+    <string name="settings_duration_time">Keep measuring</string>
+    <string name="settings_duration_full">Keep measuring until storage is full</string>
+    <string name="settings_desired_temperature_part1">Desired temperature ia above</string>
+    <string name="settings_desired_temperature_part2">and below</string>
+    <string name="settings_delay_immediat">Start measurements immediately</string>
+    <string name="settings_interval_default">Measure every 1 second</string>
+    <string name="window_delay_title">Measurement sturtup delay</string>
+    <string name="window_delay_btn_unimmediat">IMMEDIATE</string>
+    <string name="cancel_btn">CANCEL</string>
+    <string name="window_interval_title">Measurement interval</string>
+    <string name="window_duration_title">Measurement duration</string>
+    <string name="window_duration_btn_untilsorage">UNTIL STORAGE IS FULL</string>
+    <string name="window_temp_limit">Set temperature limits</string>
+    <string name="setconfig_btn">SET CONFIGURATION</string>
+    <string name="reset_btn">RESET</string>
+    <string name="config_mode_start">Configuration mode started. Attach the device to the sensor.</string>
+    <string name="reset_mode_start">Reset mode started. Attach the device to the sensor.</string>
+    <string name="reset_isok">The sensor settings have been reset. No data.</string>
+    <string name="msg_unknown_error">Unknown error</string>
+    <string name="msg_set_config_isok">Configuration has been set, the first measurement will be taken after</string>
+    <string name="msg_unknown_command">Unknown command</string>
+    <string name="msg_no_response">No response.</string>
+    <string name="msg_wrong_command_size">Wrong command size!</string>
+    <string name="msg_invalid_parameter">Invalid parameter!</string>
+    <string name="msg_command_without_header">The command has no header!</string>
+    <string name="hour">h</string>
+    <string name="minute">min</string>
+    <string name="second">sec</string>
+    <string name="chart_count">Number of measurements</string>
+    <string name="chart_config_time">Configuration time</string>
+    <string name="chart_logging_for">Logging for</string>
+    <string name="chart_measurements_count">values have been retrieved.</string>
+    <string name="chart_measured_status">Status of the measured values.</string>
+    <string name="chart_interval">Measurements interval: every</string>
+    <string name="chart_validMin">Minimum valid value:</string>
+    <string name="chart_validMax">Maximum valid value:</string>
+    <string name="chart_no_data">No data</string>
+    <string name="chart_limit">Limit error</string>
+    <string name="chart_low">Low</string>
+    <string name="chart_normal">Normal</string>
+    <string name="chart_high">High</string>
+    <string name="status_label_message_not_supported">Firmware not supported. Please upgrade and try again.</string>
+    <string name="status_label_message_device_disabled">Invalid NDEF message</string>
+    <string name="status_label_message_device_pristine_state">In Pristine State</string>
+    <string name="status_label_message_device_recording">The tag is configured and is logging.</string>
+    <string name="status_label_message_device_stopped_battery_died">Stopped as battery died</string>
+    <string name="status_label_message_device_stopped_storage_full">Stopped as storage is full</string>
+    <string name="status_app_msg_event_expired">Logging was stopped after the configured running time.</string>
+    <string name="status_app_msg_event_full">Logging has stopped because no more free space is available to store samples.</string>
+    <string name="status_app_msg_event_bod">Battery is (nearly) depleted.</string>
+    <string name="status_app_msg_event_temperature_too_low">At least one temperature value was lower than the valid minimum value.</string>
+    <string name="status_app_msg_event_temperature_too_high">At least one temperature value was higher than the valid maximum value.</string>
+    <string name="status_app_msg_event_stopped">The tag is configured and has been logging. Now it has stopped logging.</string>
+    <string name="status_app_msg_event_logging">The tag is configured and is logging. At least one sample is available.</string>
+    <string name="status_app_msg_event_starting">The tag is configured and will make a first measurement after the configured delay.</string>
+    <string name="status_app_msg_event_configured">The tag is configured, but requires an external trigger to start measuring.</string>
+    <string name="status_app_msg_event_pristine">The tag is not yet configured and contains no data.</string>
+    <string name="menu_app_settings">App Settings</string>
+    <string name="setting_language">Language</string>
+    <string name="setting_language_rus">Russian</string>
+    <string name="setting_language_eng">English</string>
+    <string name="clear_history">CLEAR HISTORY</string>
 
 </resources>

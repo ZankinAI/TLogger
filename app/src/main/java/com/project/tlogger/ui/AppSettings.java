@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,11 @@ public class AppSettings extends DialogFragment implements View.OnClickListener 
         Bundle bundle = getArguments();
 
         //TextView textView = view.findViewById(R.id.nfc_start_text);
+        RadioButton rusRadioBtn = view.findViewById(R.id.app_settings_ru);
+        RadioButton enRadioBtn = view.findViewById(R.id.app_settings_en);
+
+        if (MainActivity.msgLib.language==1) rusRadioBtn.setChecked(true);
+        if (MainActivity.msgLib.language==2) enRadioBtn.setChecked(true);
 
         if (bundle != null){
             Boolean textToTextView = bundle.getBoolean("");

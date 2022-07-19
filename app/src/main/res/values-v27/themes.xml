@@ -51,7 +51,7 @@
         <item name="android:textColorSecondary">@color/default_blue</item>
     </style>
     <style name="actionButtonOverflow"   parent="Widget.AppCompat.Light.ActionButton.Overflow">
-        <item name="android:tint">@color/default_blue   </item>
+        <item name="android:tint">@color/default_blue</item>
     </style>
 
 </resources>

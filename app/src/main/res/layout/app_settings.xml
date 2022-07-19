@@ -25,14 +25,14 @@
         android:id="@+id/app_settings_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Язык:"
-        android:textColor="@color/default_blue"
-        android:textSize="20sp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"/>
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="@string/setting_language"
+        android:textColor="@color/default_blue"
+        android:textSize="20sp" />
 
     <RadioGroup
         android:id="@+id/radios"
@@ -48,12 +48,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
-            android:text="Русский" />
+            android:text="@string/setting_language_rus"
+            android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/app_settings_en"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
-            android:text="Английский"/>
+            android:text="@string/setting_language_eng"
+            android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 
 
@@ -67,6 +69,6 @@
         android:layout_marginBottom="15dp"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="ОЧИСТИТЬ ИСТОРИЮ" />
+        android:text="@string/clear_history" />
 </RelativeLayout>
 

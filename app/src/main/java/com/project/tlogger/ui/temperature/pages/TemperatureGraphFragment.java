@@ -79,7 +79,7 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-       View v = inflater.inflate(R.layout.temperature_graph_fragment, container, false);
+       View v = inflater.inflate(R.layout.temperature_graph_fragment_adaptive, container, false);
 
        Button exportBtn = v.findViewById(R.id.button_export);
 
@@ -134,7 +134,7 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
         ValueFormatter formatter = new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return Utils.convertSeconds((int) value*interval);
+                return Utils.convertSeconds((int) value*interval, getContext());
 
             }
         };

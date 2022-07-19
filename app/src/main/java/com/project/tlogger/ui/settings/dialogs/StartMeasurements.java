@@ -83,9 +83,12 @@ public class StartMeasurements extends DialogFragment implements View.OnClickLis
     @Override
     public void onClick(View view) {
 
+        String textToInt = etext.getText().toString().trim();
         switch (view.getId()) {
+
             case R.id.start_measurement_button_ok:
-                if (etext != null){
+                if (!textToInt.equals("")){
+
                     int text = Integer.valueOf(etext.getText().toString().trim());
                     MainActivity.msgLib.cmdSetConfig.startDelay = text;
 

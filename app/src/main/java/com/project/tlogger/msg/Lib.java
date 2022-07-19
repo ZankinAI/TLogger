@@ -40,6 +40,7 @@ public class Lib {
     public short attainedMaximum;
     public int status;
     public int measuredStatus;
+    public byte language;
 
     public MeasurementStatusModel measurementStatus;
     public TemperatureStatusModel temperatureStatus;

@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">TSense</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_temperature">ТЕКУЩЕЕ СОСТОЯНИЕ</string>
+    <string name="title_history">ИСТОРИЯ ИЗМЕРЕНИЙ</string>
+    <string name="title_settings">НАСТРОЙКИ</string>
+    <string name="title_about">О ПРОГРАММЕ</string>
+    <string-array name="time">
+        <item>секунд</item>
+        <item>минут</item>
+        <item>часов</item>
+    </string-array>
+
+    <plurals name="minuits_plural">
+        <item quantity="one">%d минуту</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+    </plurals>
+
+    <plurals name="seconds_plural">
+        <item quantity="one">%d секунду</item>
+        <item quantity="few">%d секунды</item>
+        <item quantity="many">%d секунд</item>
+    </plurals>
+
+    <plurals name="hours_plural">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+    </plurals>
+    <string name="export_button_name">ЭКСПОРТ ДАННЫХ</string>
+    <string name="menu_temperature">Температура</string>
+    <string name="menu_history">История</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_about">О программе</string>
+    <string name="settings_delay_immediat">Начать измерения немедленно</string>
+    <string name="settings_interval">Периодичность измерений:</string>
+    <string name="settings_duration_time">"Продолжать измерения: "</string>
+    <string name="settings_duration_full">Измерять, пока не заполнится память</string>
+    <string name="settings_desired_temperature_part1">Границы измерения: от</string>
+    <string name="settings_desired_temperature_part2">до</string>
+    <string name="settings_delay_no_immediat">Начать измерения через</string>
+    <string name="settings_interval_default">Периодичность измерений: 1 секунда</string>
+    <string name="window_delay_title">Задержка перед началом измерений</string>
+    <string name="window_delay_btn_unimmediat">БЕЗ ЗАДЕРЖКИ</string>
+    <string name="cancel_btn">ОТМЕНА</string>
+    <string name="window_interval_title">Периодичность измерений</string>
+    <string name="window_duration_title">Длительность измерений</string>
+    <string name="window_duration_btn_untilsorage">ДО ЗАПОЛНЕНИЯ ПАМЯТИ</string>
+    <string name="window_temp_limit">Предельные значения температуры</string>
+    <string name="setconfig_btn">ЗАДАТЬ НАСТРОЙКИ</string>
+    <string name="reset_btn">СБРОС</string>
+    <string name="config_mode_start">Режим конфигурации запущен. Приложите устройство к датчику.</string>
+    <string name="reset_mode_start">Режим сброса запущен. Приложите устройство к датчику.</string>
+    <string name="reset_isok">Настройки датчика сброшены. Данных нет.</string>
+    <string name="msg_unknown_error">Неизвестная ошибка</string>
+    <string name="msg_set_config_isok">"Запись прошла успешно. Считывание начнется через "</string>
+    <string name="msg_unknown_command">Неизвестная команда</string>
+    <string name="msg_no_response">Нет ответа. И не будет.</string>
+    <string name="msg_wrong_command_size">Неверный размер команды!</string>
+    <string name="msg_invalid_parameter">Неверный параметр!</string>
+    <string name="msg_command_without_header">В команде нет заголовка!</string>
+    <string name="hour">ч</string>
+    <string name="minute">мин</string>
+    <string name="second">сек</string>
+    <string name="chart_count">Количество измерений</string>
+    <string name="chart_config_time">Время настройки</string>
+    <string name="chart_logging_for">Продолжительность измерения</string>
+    <string name="chart_measurements_count">значений было возвращено.</string>
+    <string name="chart_measured_status">Статус измеренных значений</string>
+    <string name="chart_interval">Интервал измерения: каждые</string>
+    <string name="chart_validMin">Минимально допустимая температура:</string>
+    <string name="chart_validMax">Максимально допустимая температура:</string>
+    <string name="chart_no_data">Нет данных</string>
+    <string name="chart_limit">Выход за пределы</string>
+    <string name="chart_low">Низкая</string>
+    <string name="chart_normal">Допустимая</string>
+    <string name="chart_high">Высокая</string>
+    <string name="status_label_message_not_supported">Прошивка не поддерживается. Пожалуйста, обновите и повторите попытку</string>
+    <string name="status_label_message_device_disabled">"Недопустимое NDEF-сообщение "</string>
+    <string name="status_label_message_device_pristine_state">"В состоянии \"По умолчанию\" "</string>
+    <string name="status_label_message_device_recording">Датчик настроен. Температура регистрируется.</string>
+    <string name="status_label_message_device_stopped_battery_died">Регистрация температуры остановлена, так как разрядилась батарея</string>
+    <string name="status_label_message_device_stopped_storage_full">Регистрация температуры остановлена, так как заполнилась память</string>
+    <string name="status_app_msg_event_expired">Регистрация температуры была остановлена по истечении заданного времени</string>
+    <string name="status_app_msg_event_full">Регистрация температуры остановлена, так как заполнилась память</string>
+    <string name="status_app_msg_event_bod">Регистрация температуры остановлена, так как разрядилась батарея</string>
+    <string name="status_app_msg_event_temperature_too_low">По крайней мере одно значение температуры было ниже заданного минимального значения.</string>
+    <string name="status_app_msg_event_temperature_too_high">По крайней мере одно значение температуры было выше заданного максимального значения.</string>
+    <string name="status_app_msg_event_stopped">"Датчик настроен и готов к регистрации. Сейчас не регистрирует. "</string>
+    <string name="status_app_msg_event_logging">Датчик настроен и регистрируют температуру. Доступно хотя бы одно значение</string>
+    <string name="status_app_msg_event_starting">Датчик настроен и выполнит первое измерение после настроенной задержки.</string>
+    <string name="status_app_msg_event_configured">Датчик настроен. Ожидает команды начала измерений</string>
+    <string name="status_app_msg_event_pristine">Параметры датчика сброшены. Зарегистрированных данных температуры нет.</string>
+    <string name="menu_app_settings">Настройки</string>
+    <string name="setting_language">Язык</string>
+    <string name="setting_language_rus">Русский</string>
+    <string name="setting_language_eng">Английский</string>
+    <string name="clear_history">ОЧИСТИТЬ ИСТОРИЮ</string>
+
+</resources>

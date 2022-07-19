@@ -20,7 +20,7 @@
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="Предельные значения температуры"
+        android:text="@string/window_temp_limit"
         android:textColor="@color/default_blue"
         android:textSize="15dp" />
 
@@ -153,6 +153,6 @@
         android:layout_alignRight="@id/temperature_range_rectangle"
         android:layout_marginRight="45dp"
         android:layout_marginBottom="10dp"
-        android:text="ОТМЕНА"/>
+        android:text="@string/cancel_btn" />
 </RelativeLayout>
 

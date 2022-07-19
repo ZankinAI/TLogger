@@ -20,7 +20,7 @@
 
     <Button
         android:id="@+id/button_export"
-        android:text="Export"
+        android:text="@string/export_button_name"
         android:layout_width="300dp"
         android:layout_height="80dp"
         android:layout_marginTop="20dp"

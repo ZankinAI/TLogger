@@ -33,41 +33,41 @@ public class TemperatureStatusFragment extends Fragment {
     private String mimeType;
 
 
-    private static final String STATUS_LABEL_MESSAGE_NOT_SUPPORTED =
+    private static  String STATUS_LABEL_MESSAGE_NOT_SUPPORTED =
             "Firmware not supported. Please upgrade and try again";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_DISABLED =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_DISABLED =
             "Invalid NDEF message";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_PRISTINE_STATE =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_PRISTINE_STATE =
             "In Pristine State";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_RECORDING =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_RECORDING =
             "The tag is configured and is logging.";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_STOPPED_BATTERY_DIED =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_STOPPED_BATTERY_DIED =
             "Stopped as battery died";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_STOPPED_STORAGE_FULL =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_STOPPED_STORAGE_FULL =
             "Stopped as storage is full";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_STOPPED_DEMO_EXPIRED =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_STOPPED_DEMO_EXPIRED =
             "Stopped as configured running time has expired";
-    private static final String STATUS_LABEL_MESSAGE_DEVICE_UNSUPPORTED =
+    private static  String STATUS_LABEL_MESSAGE_DEVICE_UNSUPPORTED =
             "Unsupported tag, please tap an NTAG SmartSensor.";
-    private static final String STATUS_APP_MSG_EVENT_EXPIRED =
+    private static  String STATUS_APP_MSG_EVENT_EXPIRED =
             "Logging was stopped after the configured running time.";
-    private static final String STATUS_APP_MSG_EVENT_FULL =
+    private static  String STATUS_APP_MSG_EVENT_FULL =
             "Logging has stopped because no more free space is available to store samples.";
-    private static final String STATUS_APP_MSG_EVENT_BOD =
+    private static  String STATUS_APP_MSG_EVENT_BOD =
             "Battery is (nearly) depleted.";
-    private static final String STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_LOW =
+    private static  String STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_LOW =
             "At least one temperature value was lower than the valid minimum value.";
-    private static final String STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_HIGH =
+    private static  String STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_HIGH =
             "At least one temperature value was higher than the valid maximum value.";
-    private static final String STATUS_APP_MSG_EVENT_STOPPED =
+    private static  String STATUS_APP_MSG_EVENT_STOPPED =
             "The tag is configured and has been logging. Now it has stopped logging.";
-    private static final String STATUS_APP_MSG_EVENT_LOGGING =
+    private static  String STATUS_APP_MSG_EVENT_LOGGING =
             "The tag is configured and is logging. At least one sample is available.";
-    private static final String STATUS_APP_MSG_EVENT_STARTING =
+    private static  String STATUS_APP_MSG_EVENT_STARTING =
             "The tag is configured and will make a first measurement after the configured delay.";
-    private static final String STATUS_APP_MSG_EVENT_CONFIGURED =
+    private static  String STATUS_APP_MSG_EVENT_CONFIGURED =
             "The tag is configured, but requires an external trigger to start measuring.";
-    private static final String STATUS_APP_MSG_EVENT_PRISTINE =
+    private static  String STATUS_APP_MSG_EVENT_PRISTINE =
             "The tag is not yet configured and contains no data.";
 
 
@@ -80,9 +80,22 @@ public class TemperatureStatusFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         _msgLib = MainActivity.msgLib;
+
+        STATUS_LABEL_MESSAGE_NOT_SUPPORTED = getResources().getString(R.string.status_label_message_not_supported);
+        STATUS_APP_MSG_EVENT_EXPIRED = getResources().getString(R.string.status_app_msg_event_expired);
+        STATUS_APP_MSG_EVENT_FULL = getResources().getString(R.string.status_app_msg_event_full);
+        STATUS_APP_MSG_EVENT_BOD = getResources().getString(R.string.status_app_msg_event_bod);
+        STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_LOW = getResources().getString(R.string.status_app_msg_event_temperature_too_low);
+        STATUS_APP_MSG_EVENT_TEMPERATURE_TOO_HIGH = getResources().getString(R.string.status_app_msg_event_temperature_too_high);
+        STATUS_APP_MSG_EVENT_STOPPED = getResources().getString(R.string.status_app_msg_event_stopped);
+        STATUS_APP_MSG_EVENT_LOGGING = getResources().getString(R.string.status_app_msg_event_logging);
+        STATUS_APP_MSG_EVENT_STARTING = getResources().getString(R.string.status_app_msg_event_starting);
+        STATUS_APP_MSG_EVENT_CONFIGURED = getResources().getString(R.string.status_app_msg_event_configured);
+        STATUS_APP_MSG_EVENT_PRISTINE = getResources().getString(R.string.status_app_msg_event_pristine);
+
         statusIcon = R.drawable.logo_bordered;
         createDataFragment();
-        View view = inflater.inflate(R.layout.temperature_status_fragment, container, false);
+        View view = inflater.inflate(R.layout.temperature_status_fragment_adaptive, container, false);
         TextView textViewInfo = view.findViewById(R.id.temp_info);
         textViewInfo.setText(textStatus);
 
