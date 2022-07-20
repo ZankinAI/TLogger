@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
@@ -32,6 +33,11 @@ public class TemperatureFragment extends Fragment {
         TemperatureAdapter temperatureAdapter = new TemperatureAdapter(getActivity());
         viewPager2.setAdapter(temperatureAdapter);
         viewPager2.setCurrentItem(0);
+        TextView title  = view.findViewById(R.id.title_temperature);
+
+        if (MainActivity.msgLib.flagOpenFragmentFromHistory)
+            title.setText(getResources().getString(R.string.title_history));
+        else title.setText(getResources().getString(R.string.title_temperature));
 
         return view;
     }

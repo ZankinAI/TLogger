@@ -1,10 +1,16 @@
 package com.project.tlogger.ui.temperature.pages;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -48,6 +54,7 @@ import com.project.tlogger.msg.model.GraphMarkerView;
 import com.project.tlogger.msg.model.Utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -64,9 +71,12 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
     private short attainedMax;
     private short validMin;
     private short validMax;
+    private short count;
+    private short receivedCount;
     long configTime;
     int interval;
     int startDelay;
+    private BarChart topdfChart;
 
 
 
@@ -94,6 +104,8 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
            startDelay = _msgLib.selectedStoreData.responseConfigData.startDelay;
            validMin = _msgLib.selectedStoreData.responseConfigData.validMinimum;
            validMax = _msgLib.selectedStoreData.responseConfigData.validMaximum;
+           count = _msgLib.selectedStoreData.responseConfigData.count;
+           receivedCount = (short)_msgLib.selectedStoreData.retrievedCount;
        }
        else if (_msgLib.flagTloggerConnected){
            data =Utils.approximation(Utils.StringtoMasShort(_msgLib.storeData.data));
@@ -104,6 +116,8 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
            startDelay = _msgLib.storeData.responseConfigData.startDelay;
            validMin = _msgLib.storeData.responseConfigData.validMinimum;
            validMax = _msgLib.storeData.responseConfigData.validMaximum;
+           count = _msgLib.storeData.responseConfigData.count;
+           receivedCount = (short)_msgLib.storeData.retrievedCount;
        }
 
 
@@ -176,8 +190,15 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
         chart.setDescription(null);
         chart.setNoDataText("Нет данных");
 
+        chart.setDrawingCacheEnabled(true);
+        chart.buildDrawingCache(true);
+
         BarData data = new BarData(dataset);
         chart.setData(data);
+
+
+
+        topdfChart = chart;
 
 
 
@@ -186,11 +207,20 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
             public void onClick(View view) {
                 Log.d("myTag", "exportBtn Clicked");
                 exportDataToCSV();
+                generatePDF();
             }
         });
 
 
        return v;
+    }
+
+    public static Bitmap loadBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+        v.draw(c);
+        return b;
     }
 
     private void exportDataToCSV(){
@@ -224,7 +254,7 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
             List<String[]> dataList = new ArrayList<String[]>();
 
             for (int i = 0; i < this.data.length; i++){
-                dataList.add(new String[]{String.valueOf(i), String.valueOf(new Timestamp(this.configTime * 1000 +(i * this.interval + this.startDelay) * 1000)), String.valueOf(this.data[i]/10.0)});
+                dataList.add(new String[]{String.valueOf(i), String.valueOf(new Timestamp(this.configTime * 1000 +(i * this.interval + this.startDelay) * 1000)), String.format("%2f", this.data[i]/10.0)});
             }
 
             writer.writeAll(dataList);
@@ -248,6 +278,128 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
         intentShare.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+file));
         startActivity(Intent.createChooser(intentShare, "Share the file ..."));*/
 
+    }
+
+    private void generatePDF() {
+        // creating an object variable
+        // for our PDF document.
+        int pageHeight = 3000;
+        int pagewidth = 2000;
+        PdfDocument pdfDocument = new PdfDocument();
+
+        // two variables for paint "paint" is used
+        // for drawing shapes and we will use "title"
+        // for adding text in our PDF file.
+        Paint paint = new Paint();
+        Paint title = new Paint();
+
+        // we are adding page info to our PDF file
+        // in which we will be passing our pageWidth,
+        // pageHeight and number of pages and after that
+        // we are calling it to create our PDF.
+        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
+
+        // below line is used for setting
+        // start page for our PDF file.
+        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+
+        // creating a variable for canvas
+        // from our page of PDF.
+        Canvas canvas = myPage.getCanvas();
+
+        // below line is used to draw our image on our PDF file.
+        // the first parameter of our drawbitmap method is
+        // our bitmap
+        // second parameter is position from left
+        // third parameter is position from top and last
+        // one is our variable for paint.
+        //Bitmap bm = loadBitmapFromView(this.topdfChart);
+        Bitmap bm = Bitmap.createBitmap(this.topdfChart.getDrawingCache());
+        canvas.drawBitmap(bm, 700, 200, paint);
+
+        // below line is used for adding typeface for
+        // our text which we will be adding in our PDF file.
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+        // below line is used for setting text size
+        // which we will be displaying in our PDF file.
+        title.setTextSize(30);
+
+        // below line is sued for setting color
+        // of our text inside our PDF file.
+        title.setColor(ContextCompat.getColor(getContext(), R.color.black));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        title.setTextAlign(Paint.Align.CENTER);
+        // below line is used to draw text in our PDF file.
+        // the first parameter is our text, second parameter
+        // is position from start, third parameter is position from top
+        // and then we are passing our variable of paint which is title.
+        canvas.drawText("График зависимости температуры", 1000, 100, title);
+        canvas.drawText("Создан :" + dateFormat.format(timestamp) , 1000, 130, title);
+
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        paint.setTextSize(25);
+        paint.setTextAlign(Paint.Align.LEFT);
+
+        canvas.drawText("Начало измерений: " + String.valueOf(new Timestamp(this.configTime * 1000)), 20, 200, paint);
+
+        canvas.drawText("Продолжительность измерения: " + Utils.convertSeconds(interval * count, getContext()) , 20, 250, paint);
+
+        canvas.drawText("Интервал измерений: " + Utils.convertSeconds(interval, getContext()), 20, 300, paint);
+
+        canvas.drawText("Измерено значений: " + String.valueOf(count) , 20, 350, paint);
+
+        canvas.drawText("Считано значений: " + String.valueOf(receivedCount), 20, 400, paint);
+
+        canvas.drawText("Максимальное допустимое значение: " + String.valueOf(validMax/10.0) + " \u2103", 20, 450, paint);
+
+        canvas.drawText("Максимальное измеренное значение: " + String.valueOf(attainedMax/10.0) + " \u2103", 20, 500, paint);
+
+        canvas.drawText("Минимальное допустимое значение: " + String.valueOf(validMin/10.0) + " \u2103", 20, 550, paint);
+
+        canvas.drawText("Минимальное измеренное значение: " + String.valueOf(attainedMin/10.0) + " \u2103", 20, 600, paint);
+        //canvas.drawText("Geeks for Geeks", 209, 80, title);
+
+        // similarly we are creating another text and in this
+        // we are aligning this text to center of our PDF file.
+        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        title.setColor(ContextCompat.getColor(getContext(), R.color.purple_200));
+        title.setTextSize(15);
+
+        // below line is used for setting
+        // our text to center of PDF.
+        title.setTextAlign(Paint.Align.CENTER);
+
+
+        // after adding all attributes to our
+        // PDF file we will be finishing our page.
+        pdfDocument.finishPage(myPage);
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy HH_mm_ss");
+
+        String fileName = "TSense"+dateFormat.format(timestamp)+".pdf";
+        // below line is used to set the name of
+        // our PDF file and its path.
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), fileName);
+
+        try {
+            // after creating a file name we will
+            // write our PDF file to that location.
+            pdfDocument.writeTo(new FileOutputStream(file));
+
+            // below line is to print toast message
+            // on completion of PDF generation.
+            //Toast.makeText(getContext(), "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            // below line is used
+            // to handle error
+            e.printStackTrace();
+        }
+        // after storing our pdf to that
+        // location we are closing our PDF file.
+        pdfDocument.close();
     }
 
     private static double roundAvoid(double value, int places) {

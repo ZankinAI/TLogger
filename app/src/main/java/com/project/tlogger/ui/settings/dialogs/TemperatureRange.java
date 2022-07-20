@@ -99,6 +99,9 @@ public class TemperatureRange extends DialogFragment implements View.OnClickList
                         lower_range_send = upper_range_send;
                         upper_range_send = temp;
                     }
+
+                    if (lower_range_send<-40) lower_range_send = -40;
+                    if (upper_range_send>85) upper_range_send = 85;
                     MainActivity.msgLib.cmdSetConfig.validMinimum = lower_range_send*10;
                     MainActivity.msgLib.cmdSetConfig.validMaximum = upper_range_send*10;
                     mOnInputListener.sendInput(3, lower_range_send*10, upper_range_send*10);

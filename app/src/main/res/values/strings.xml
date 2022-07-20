@@ -104,5 +104,12 @@
     <string name="setting_language_rus">Russian</string>
     <string name="setting_language_eng">English</string>
     <string name="clear_history">CLEAR HISTORY</string>
+    <string name="receive_data_part1">"Loading a package of "</string>
+    <string name="receive_data_part2">temperature values</string>
+    <string name="receive_final_part1">Received</string>
+    <string name="receive_final_part2">values out of</string>
+    <string name="clear_history_confirm">Confirm</string>
+    <string name="clear_history_sure">Are you sure you want to clear the measurement history?</string>
+    <string name="clear_history_cleared">Measurement history cleared.</string>
 
 </resources>

@@ -41,8 +41,12 @@ public class AboutViewModel extends ViewModel {
     }
 
     private String readText() {
+        int resourse = R.raw.about_ru;
+        if (MainActivity.msgLib.language == 1) resourse = R.raw.about_ru;
+        if (MainActivity.msgLib.language == 2) resourse = R.raw.about_en;
+
         InputStream inputStream = MainActivity.getContext().getResources().openRawResource(
-                R.raw.about_ru);
+                resourse);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         int i;
         try {

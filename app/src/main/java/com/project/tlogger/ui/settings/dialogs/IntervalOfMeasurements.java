@@ -84,7 +84,8 @@ public class IntervalOfMeasurements extends DialogFragment implements View.OnCli
             case R.id.interval_of_measurements_button_ok:
                 if  (!textToInt.equals("")){
                     int text = Integer.valueOf(etext.getText().toString().trim());
-                    MainActivity.msgLib.cmdSetConfig.interval = text;
+                    if (text==0) MainActivity.msgLib.cmdSetConfig.interval = text+1;
+                    else MainActivity.msgLib.cmdSetConfig.interval = text;
                     int textSpinner = espinner.getSelectedItemPosition();
                     MainActivity.msgLib.cmdSetConfig.intervalMeasure = textSpinner;
                     mOnInputListener.sendInput(1, text, textSpinner);
@@ -92,8 +93,8 @@ public class IntervalOfMeasurements extends DialogFragment implements View.OnCli
                 }
                 else {
                     mOnInputListener.sendInput(1, 0, 0);
-                    MainActivity.msgLib.cmdSetConfig.intervalMeasure = 0;
-                    MainActivity.msgLib.cmdSetConfig.interval = 0;
+                    MainActivity.msgLib.cmdSetConfig.intervalMeasure = 1;
+                    MainActivity.msgLib.cmdSetConfig.interval = 1;
                 }
                 //
                 dismiss();

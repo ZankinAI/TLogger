@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
         int count = 0;
         if (msgLib.count>0){
-            Toast.makeText(this, "Загрузка пакета из " + String.valueOf(msgLib.count) + " значений температуры" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.receive_data_part1) + " " + String.valueOf(msgLib.count) + " " + getResources().getString(R.string.receive_data_part2) , Toast.LENGTH_SHORT).show();
 
             while (msgLib.flagTloggerCurrentConnect){
 
@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
             }
 
-            Toast.makeText(this, "Получено "+offset+" значений из " + msgLib.count  , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.receive_final_part1)+" "+offset+" " + getResources().getString(R.string.receive_final_part2) + " " + msgLib.count  , Toast.LENGTH_SHORT).show();
 
 
         }

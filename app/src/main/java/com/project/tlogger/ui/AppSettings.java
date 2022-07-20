@@ -78,14 +78,14 @@ public class AppSettings extends DialogFragment implements View.OnClickListener 
             case R.id.app_settings_button:
 
                 new AlertDialog.Builder(getContext(), R.style.AlertDialog)
-                        .setTitle("Подтверждение")
-                        .setMessage("Вы действительно\nхотите очистить историю измерений?")
-                        .setPositiveButton("Отмена", null)
+                        .setTitle(getResources().getString(R.string.clear_history_confirm))
+                        .setMessage(getResources().getString(R.string.clear_history_sure))
+                        .setPositiveButton(getResources().getString(R.string.cancel_btn), null)
                         .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Log.e("mytag", "clear");
                                 confirmationListener.confirmClear();
-                                Toast.makeText(getActivity(), "История измерений очищена.",
+                                Toast.makeText(getActivity(), getResources().getString(R.string.clear_history_cleared),
                                         Toast.LENGTH_LONG).show();
                             }
                         }).show();
