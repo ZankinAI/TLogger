@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,6 +31,8 @@ import com.project.tlogger.msg.model.MeasurementStatusModel;
 import com.project.tlogger.msg.model.StoreDataModel;
 import com.project.tlogger.msg.model.TemperatureStatusModel;
 import com.project.tlogger.msg.model.Utils;
+import com.project.tlogger.ui.AppClearHistory;
+import com.project.tlogger.ui.AppSettings;
 import com.project.tlogger.ui.temperature.TemperatureFragment;
 
 import java.util.ArrayList;
@@ -76,6 +81,8 @@ public class HistoryFragment extends Fragment {
         // устанавливаем для списка адаптер
         measurmentsList.setAdapter(stateAdapter);
 
+        setHasOptionsMenu(true);
+
         measurmentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -121,6 +128,37 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.menu_main, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int historyId = R.layout.history_fragment;
+        AppClearHistory dialog = new AppClearHistory();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("", false);
+        dialog.setArguments(bundle);
+        dialog.show(getActivity().getSupportFragmentManager(), "custom");
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

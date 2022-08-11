@@ -106,6 +106,7 @@ public class ResponseHandler {
             System.arraycopy(payload, 1+ langLenght, text, 0, textLenght);
             String textData = new String(text);
             textData += "\n";
+            
             lib.textStatus += textData;
             lib.storeData.textStatus = lib.textStatus;
 

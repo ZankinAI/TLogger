@@ -97,13 +97,15 @@ public class TemperatureStatusFragment extends Fragment {
         createDataFragment();
         View view = inflater.inflate(R.layout.temperature_status_fragment_adaptive, container, false);
         TextView textViewInfo = view.findViewById(R.id.temp_info);
+        if ((_msgLib.language == 1)&&(textStatus!=null))
+            textStatus = Utils.translateStatus(textStatus);
         textViewInfo.setText(textStatus);
 
-        TextView textViewApiVersion = view.findViewById(R.id.system_info);
+        /*TextView textViewApiVersion = view.findViewById(R.id.system_info);
         textViewApiVersion.setText(apiVersion);
 
         TextView textViewMimeType = view.findViewById(R.id.mime_type);
-        textViewMimeType.setText(_msgLib.mimeType);
+        textViewMimeType.setText(_msgLib.mimeType);*/
 
         TextView textViewStatus = view.findViewById(R.id.temp_status);
         ImageView imageViewStatus = view.findViewById(R.id.temp_status_image);
@@ -111,10 +113,24 @@ public class TemperatureStatusFragment extends Fragment {
 
         imageViewStatus.setImageResource(statusIcon);
         textViewStatus.setText(statusText);
+
+         ImageView imagePages = view.findViewById(R.id.page);
+        imagePages.setVisibility(View.VISIBLE);
+
+        if ((MainActivity.msgLib.flagUnknownMessage)&& (!MainActivity.msgLib.flagOpenFragmentFromHistory))
+            imagePages.setVisibility(View.INVISIBLE);
+
+        if (((MainActivity.msgLib.flagTloggerConnected)||(MainActivity.msgLib.flagOpenFragmentFromHistory))==false)
+            imagePages.setVisibility(View.INVISIBLE);
+
+
+
+
         return view;
     }
 
     private void createDataFragment(){
+
         if (_msgLib.flagOpenFragmentFromHistory){
             textStatus = _msgLib.selectedStoreData.textStatus;
             apiVersion = _msgLib.selectedStoreData.apiVersion;
@@ -125,8 +141,30 @@ public class TemperatureStatusFragment extends Fragment {
             createStatus(measurementStatus, failureStatus, temperatureStatus);
         }
         else if (_msgLib.flagTloggerConnected) {
+
+            if (_msgLib.flagUnknownMessage){
+                MeasurementStatusModel.Measurement measurementStatus = MeasurementStatusModel.Measurement.Unknown;
+                MeasurementStatusModel.Failure failureStatus  = MeasurementStatusModel.Failure.Unknown;
+                TemperatureStatusModel.Temperature temperatureStatus = TemperatureStatusModel.Temperature.Unknown;
+                createStatus(measurementStatus, failureStatus, temperatureStatus);
+                return;
+
+            }
+
             textStatus = _msgLib.storeData.textStatus;
             apiVersion = _msgLib.storeData.apiVersion;
+
+
+            if (_msgLib.storeData.responseConfigData==null){
+                MeasurementStatusModel.Measurement measurementStatus = MeasurementStatusModel.Measurement.Unknown;
+                MeasurementStatusModel.Failure failureStatus  = MeasurementStatusModel.Failure.Unknown;
+                TemperatureStatusModel.Temperature temperatureStatus = TemperatureStatusModel.Temperature.Unknown;
+                createStatus(measurementStatus, failureStatus, temperatureStatus);
+                _msgLib.flagUnknownMessage=true;
+                return;
+
+            }
+
             Object[] parsedStatus = Utils.parsingEvent(_msgLib.storeData.responseConfigData.status);
             MeasurementStatusModel.Measurement measurementStatus = (MeasurementStatusModel.Measurement) parsedStatus[0];
             MeasurementStatusModel.Failure failureStatus = (MeasurementStatusModel.Failure) parsedStatus[1];

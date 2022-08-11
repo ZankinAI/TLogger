@@ -73,9 +73,9 @@
     <string name="chart_count">Number of measurements</string>
     <string name="chart_config_time">Configuration time</string>
     <string name="chart_logging_for">Logging for</string>
-    <string name="chart_measurements_count">values have been retrieved.</string>
-    <string name="chart_measured_status">Status of the measured values.</string>
-    <string name="chart_interval">Measurements interval: every</string>
+    <string name="chart_measurements_count">Values have been retrieved:</string>
+    <string name="chart_measured_status">Status of the measured values:</string>
+    <string name="chart_interval">Measurements interval:</string>
     <string name="chart_validMin">Minimum valid value:</string>
     <string name="chart_validMax">Maximum valid value:</string>
     <string name="chart_no_data">No data</string>

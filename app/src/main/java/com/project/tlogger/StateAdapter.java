@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.project.tlogger.msg.model.Utils;
+
 import java.util.List;
 public class StateAdapter extends ArrayAdapter<HistoryState>{
 
@@ -34,7 +36,7 @@ public class StateAdapter extends ArrayAdapter<HistoryState>{
         ImageView measurmentIconView = convertView.findViewById(R.id.measurmentIcon);
         TextView nfcIdView = convertView.findViewById(R.id.nfcId);
         TextView stateView = convertView.findViewById(R.id.state);
-        TextView apiView = convertView.findViewById(R.id.version);
+        //TextView apiView = convertView.findViewById(R.id.version);
         TextView timeView = convertView.findViewById(R.id.date);
 
         HistoryState state = states.get(position);
@@ -42,7 +44,8 @@ public class StateAdapter extends ArrayAdapter<HistoryState>{
         measurmentIconView.setImageResource(state.getMeasurementResource());
         nfcIdView.setText(state.getNfcId());
         stateView.setText(state.getState());
-        apiView.setText(state.getApi());
+        if (MainActivity.msgLib.language==1) stateView.setText(Utils.translateStatus(state.getState()));
+        //apiView.setText(state.getApi());
         timeView.setText(state.getTime());
 
 
@@ -51,13 +54,13 @@ public class StateAdapter extends ArrayAdapter<HistoryState>{
 
     private class ViewHolder {
         final ImageView measurmentIconView;
-        final TextView nfcIdView, stateView, apiView, timeView;
+        final TextView nfcIdView, stateView, timeView;
 
         ViewHolder(View view){
             measurmentIconView=view.findViewById(R.id.measurmentIcon);
             nfcIdView = view.findViewWithTag(R.id.nfcId);
             stateView = view.findViewById(R.id.state);
-            apiView = view.findViewById(R.id.version);
+            //apiView = view.findViewById(R.id.version);
             timeView = view.findViewById(R.id.date);
         }
     }

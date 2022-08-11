@@ -11,11 +11,13 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.msgLib.activity = 2;
         setContentView(R.layout.activity_history);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+        MainActivity.msgLib.activity = 1;
         onBackPressed();
         return true;
     }

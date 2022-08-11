@@ -32,6 +32,7 @@ public class Lib {
     public boolean flagOpenFragmentFromHistory;
     public boolean flagStandartMessageReceive;
     public boolean flagReadFromDB;
+    public boolean flagUnknownMessage;
 
     public short interval;
     public short validMinimum;
@@ -41,6 +42,8 @@ public class Lib {
     public int status;
     public int measuredStatus;
     public byte language;
+
+    public int activity;
 
     public MeasurementStatusModel measurementStatus;
     public TemperatureStatusModel temperatureStatus;
@@ -79,6 +82,7 @@ public class Lib {
         this.measurementStatus = new MeasurementStatusModel();
         this.temperatureStatus = new TemperatureStatusModel();
         this.msgErr = Protocol.MSG_ERR.MSG_ERR_UNKNOWN_ERROR;
+        this.flagUnknownMessage = false;
     }
 }
 

@@ -148,7 +148,7 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
         ValueFormatter formatter = new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return Utils.convertSeconds((int) value*interval, getContext());
+                return Utils.convertSeconds((int)(value + 1)*interval, getContext());
 
             }
         };
@@ -254,7 +254,7 @@ public class TemperatureGraphFragment extends Fragment implements OnChartGesture
             List<String[]> dataList = new ArrayList<String[]>();
 
             for (int i = 0; i < this.data.length; i++){
-                dataList.add(new String[]{String.valueOf(i), String.valueOf(new Timestamp(this.configTime * 1000 +(i * this.interval + this.startDelay) * 1000)), String.format("%2f", this.data[i]/10.0)});
+                dataList.add(new String[]{String.valueOf(i), String.valueOf(new Timestamp(this.configTime * 1000 +((i+1) * this.interval + this.startDelay) * 1000)), String.format("%2f", this.data[i]/10.0)});
             }
 
             writer.writeAll(dataList);

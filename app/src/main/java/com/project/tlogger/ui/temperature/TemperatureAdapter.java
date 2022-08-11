@@ -18,14 +18,22 @@ public class TemperatureAdapter extends FragmentStateAdapter{
     }
     @Override
     public int getItemCount(){
+
+        if ((MainActivity.msgLib.flagUnknownMessage)&& (!MainActivity.msgLib.flagOpenFragmentFromHistory)) return 1;
+
         if (((MainActivity.msgLib.flagTloggerConnected)||(MainActivity.msgLib.flagOpenFragmentFromHistory))==false)
             return 1;
+
+
         return 3;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position){
+
+
+        if ((MainActivity.msgLib.flagUnknownMessage)&& (!MainActivity.msgLib.flagOpenFragmentFromHistory)) return new TemperatureStatusFragment();
 
         if (((MainActivity.msgLib.flagTloggerConnected)||(MainActivity.msgLib.flagOpenFragmentFromHistory))==false)
             return new TemperatureStatusFragment();

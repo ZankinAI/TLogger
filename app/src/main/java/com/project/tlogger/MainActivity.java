@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.project.tlogger.ui.AppClearHistory;
 import com.project.tlogger.ui.AppSettings;
 import com.project.tlogger.msg.model.DatabaseHelper;
 import com.project.tlogger.msg.model.StoreDataModel;
@@ -58,7 +59,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements onSomeEventListener, AppSettings.ConfirmationListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
+public class MainActivity extends AppCompatActivity implements onSomeEventListener, AppSettings.ConfirmationListener, AppClearHistory.ConfirmationListener, StartMeasurements.OnInputListener, IntervalOfMeasurements.OnInputListener, EndMeasurements.OnInputListener, TemperatureRange.OnInputListener {
     public static Lib msgLib;
     private static Context mContext;
     boolean flag = false;
@@ -103,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         msgLib = new Lib();
+
+        msgLib.activity = 1;
 
         cmdHandler = new CommandHandler(msgLib);
 
@@ -161,9 +164,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         databaseHelper.create_db();
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -175,12 +179,12 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         // as you specify a parent activity in AndroidManifest.xml.
 
 
+       int fragmentID =  navController.getCurrentDestination().getId();
+        int historyId = R.layout.history_fragment;
         AppSettings dialog = new AppSettings();
-
         Bundle bundle = new Bundle();
         bundle.putBoolean("", false);
         dialog.setArguments(bundle);
-
         dialog.show(getSupportFragmentManager(), "custom");
 
         int id = item.getItemId();
@@ -191,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
 
     @Override
@@ -213,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
     @Override
     protected void onResume() {
         super.onResume();
+        msgLib.activity = 1;
         Log.d(TAG, "on Resume");
         MainActivity.msgLib.flagOpenFragmentFromHistory = false;
         String nfcid = "gfg";
@@ -383,7 +388,8 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
 
         Ndef ndef = Ndef.get(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
         navController.navigate( R.id.navigation_temperature);
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())||NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             if (myTag==null)
                 Log.d(TAG, "myTag is null");
@@ -391,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 Log.d(TAG, "myTag is not null");
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage[] msgs;
-
+            int i=7;
             if (rawMsgs!=null){
 
                 NdefMessage msg = (NdefMessage)rawMsgs[0];
@@ -418,6 +424,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 Toast.makeText(this, new String(text), Toast.LENGTH_SHORT).show();
 
                 Log.d(TAG, new String(text));*/
+                msgLib.flagUnknownMessage = false;
 
             }
             else {
@@ -427,7 +434,10 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN, empty, id, payload);
                 NdefMessage msg = new NdefMessage(new NdefRecord[] {record});
                 msgs = new NdefMessage[] {msg};
+                String payloadText = new String(payload);
                 Log.d(TAG, "msg null but cool");
+                msgLib.flagUnknownMessage = true;
+                return;
             }
 
 
@@ -472,11 +482,8 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                     NdefRecord[] records1 = response.getRecords();
                     rsp = new ResponseHandler(msgLib, records1[0]);
                     offset+=msgLib.currentMeasurementsCount;
-
                     Log.d(TAG, "write msg");
                     ndef.close();
-
-
                 }
                 catch (Exception e){
                     Log.d(TAG, "no connect");
@@ -801,7 +808,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                         if (number == 0)
                         {textView.setText(R.string.settings_interval_default);}
                         else if (number <= 60)
-                        {textView.setText(getResources().getString(R.string.settings_duration_time) + " "+ getResources().getQuantityString(timeMeasure[time], number, number));}
+                        {textView.setText(getResources().getString(R.string.settings_interval) + " "+ getResources().getQuantityString(timeMeasure[time], number, number));}
                         else
                         {textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[1], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));}
                         break;
@@ -809,14 +816,14 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                         if (number == 0)
                         {textView.setText(R.string.settings_interval_default);}
                         else if (number <= 60)
-                            textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[time], number, number));
+                            textView.setText(getResources().getString(R.string.settings_interval) + " " + getResources().getQuantityString(timeMeasure[time], number, number));
                         else
-                            textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
+                            textView.setText(getResources().getString(R.string.settings_interval) + " " + getResources().getQuantityString(timeMeasure[2], number / 60 % 60, number / 60 % 60) + " " + getResources().getQuantityString(timeMeasure[time], number / 1 % 60, number / 1 % 60));
                         break;
                     case 2:
                         if (number == 0)
                         {textView.setText(R.string.settings_interval_default);}
-                        else textView.setText(getResources().getString(R.string.settings_duration_time) + " " + getResources().getQuantityString(timeMeasure[time], number, number));
+                        else textView.setText(getResources().getString(R.string.settings_interval) + " " + getResources().getQuantityString(timeMeasure[time], number, number));
                         break;
                     case 3:
                         textView.setText(R.string.settings_interval_default);
@@ -882,6 +889,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
         databaseHelper.removeDateFromDB(db);
         db.close();
         msgLib.storeDataModelList.clear();
+        this.recreate();
         Log.e("mytag", "cleared");
     }
 
@@ -899,7 +907,7 @@ public class MainActivity extends AppCompatActivity implements onSomeEventListen
                 APP_PREFERENCES, MODE_PRIVATE);
         msgLib.language = (byte)sharedPreferences.getInt(
                 APP_LANGUAGE, 0);
-        Locale locale = new Locale("ru"); ;
+        Locale locale = new Locale("ru");
 
         if (msgLib.language == 1) locale = new Locale("ru");
         if (msgLib.language == 2) locale = new Locale("en");

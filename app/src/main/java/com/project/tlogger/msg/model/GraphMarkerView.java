@@ -40,7 +40,7 @@ public class GraphMarkerView extends MarkerView {
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         isReverse = !(highlight.getX() > 8);
-        dataTime.setText(String.valueOf(new Timestamp(configTime * 1000 + ((long)e.getX() * interval + startDelay) * 1000))); // set the entry-value as the display text
+        dataTime.setText(String.valueOf(new Timestamp(configTime * 1000 + ((long)(e.getX()+1) * interval + startDelay) * 1000))); // set the entry-value as the display text
         temperature.setText("Температура: " + String.valueOf(e.getY()) + "\u2103");
         super.refreshContent(e,highlight);
     }

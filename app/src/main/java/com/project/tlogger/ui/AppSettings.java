@@ -58,7 +58,7 @@ public class AppSettings extends DialogFragment implements View.OnClickListener 
             Boolean textToTextView = bundle.getBoolean("");
             //textView.setText(textToTextView);
         }
-        view.findViewById(R.id.app_settings_button).setOnClickListener(this);
+        //view.findViewById(R.id.app_settings_button).setOnClickListener(this);
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

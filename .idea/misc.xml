@@ -42,6 +42,7 @@
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/about_fragment.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/activity_history.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/app_clear_history.xml" value="0.16" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/app_settings.xml" value="0.16302083333333334" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/end_measurements.xml" value="0.16302083333333334" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/fragment_dashboard.xml" value="0.17481884057971014" />
@@ -50,7 +51,7 @@
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/graph_marker_view.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/history_fragment.xml" value="0.25" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/interval_of_measurements.xml" value="0.22" />
-        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/layout_action_bar.xml" value="0.5" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/layout_action_bar.xml" value="0.12" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/list_item.xml" value="0.18" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/nfc_start.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/receive_data_dialog.xml" value="0.1" />
@@ -58,14 +59,14 @@
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/settings_fragment_adaptive.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/start_measurements.xml" value="0.16302083333333334" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_chart_fragment.xml" value="0.22" />
-        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_chart_fragment_adaptive.xml" value="0.5" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_chart_fragment_adaptive.xml" value="0.25" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_fragment.xml" value="0.17481884057971014" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_graph_fragment.xml" value="0.11413043478260869" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_graph_fragment_adaptive.xml" value="0.33" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_page_fragment.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_range.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_status_fragment.xml" value="0.25" />
-        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_status_fragment_adaptive.xml" value="0.33" />
+        <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/layout/temperature_status_fragment_adaptive.xml" value="0.22" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/menu/menu_main.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/zanki/AndroidStudioProjects/TLogger/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1895" />

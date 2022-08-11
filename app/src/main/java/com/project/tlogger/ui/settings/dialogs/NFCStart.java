@@ -21,6 +21,7 @@ import androidx.fragment.app.DialogFragment;
 import com.project.tlogger.MainActivity;
 import com.project.tlogger.R;
 import com.project.tlogger.msg.model.Protocol;
+import com.project.tlogger.msg.model.Utils;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +91,7 @@ public class NFCStart extends DialogFragment implements View.OnClickListener {
 
         if (error == Protocol.MSG_ERR.MSG_OK.getValue())
             return getResources().getString(R.string.msg_set_config_isok) +" "
-                    + String.valueOf(MainActivity.msgLib.cmdSetConfig.startDelay) + " " + getResources().getString(R.string.second);
+                    + Utils.convertSeconds(MainActivity.msgLib.cmdSetConfig.startDelay, getContext());
         if (error == Protocol.MSG_ERR.MSG_ERR_UNKNOWN_COMMAND.getValue())
             return getResources().getString(R.string.msg_unknown_command);
         if (error == Protocol.MSG_ERR.MSG_ERR_NO_RESPONSE.getValue())

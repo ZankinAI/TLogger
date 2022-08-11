@@ -199,6 +199,11 @@ public class TemperatureChartFragment extends Fragment {
         else textStatusOfMeasured.setTextColor(Color.rgb(7,159,13));
         textStatusOfMeasured.setText("OK");
 
+        TextView textStatus = view.findViewById(R.id.status);
+        if (!flagStatusNormal) textStatus.setTextColor(Color.rgb(255,0,0));
+        else textStatus.setTextColor(Color.rgb(7,159,13));
+
+
         if ((attainedMax>validMax)||(attainedMin<validMin))
             textStatusOfMeasured.setText(R.string.chart_limit);
 
@@ -352,17 +357,17 @@ public class TemperatureChartFragment extends Fragment {
                 "\"minValue\": \""+String.valueOf(minLimit)+"\",\n"+
                 "\"maxValue\": \""+String.valueOf(configMin)+"\",\n"+
                 "\"label\": \""+low+"\",\n"+
-                "\"code\": \"#f59842\",\n"+
+                "\"code\": \"#161df2\",\n"+
                 "},{\n"+
                 "\"minValue\": \""+String.valueOf(configMin)+"\",\n"+
                 "\"maxValue\": \""+String.valueOf(configMax)+"\",\n"+
                 "\"label\": \""+normal+"\",\n"+
-                "\"code\": \"#4290f5\",\n"+
+                "\"code\": \"#f7e257\",\n"+
                 "},{\n"+
                 "\"minValue\": \""+String.valueOf(configMax)+"\",\n"+
                 "\"maxValue\": \""+String.valueOf(maxLimit)+"\",\n"+
                 "\"label\": \""+high+"\",\n"+
-                "\"code\": \"#f59842\",\n"+
+                "\"code\": \"#d92121\",\n"+
                 "}]\n"+
                 "},\n" +
                 "\"pointers\": {\n" +
@@ -389,6 +394,8 @@ public class TemperatureChartFragment extends Fragment {
     }
 
     private void createDataFragment(){
+
+
         if (_msgLib.flagOpenFragmentFromHistory){
             nfcId = _msgLib.selectedStoreData.nfcId;
             count = _msgLib.selectedStoreData.responseConfigData.count;

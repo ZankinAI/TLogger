@@ -9,14 +9,115 @@ import com.project.tlogger.R;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
+    public static String translateStatus(String status){
+        String result;
 
+        Pattern pattern = Pattern.compile("Stopped");
+        Matcher matcher = pattern.matcher(status);
+        result = matcher.replaceAll("Остановлен");
+
+        pattern = Pattern.compile("ALERT");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("ПРЕДУЖДЕНИЕ");
+
+        pattern = Pattern.compile("Current temperature");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Текущая температура");
+
+        pattern = Pattern.compile("Minimum");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Минимум");
+
+        pattern = Pattern.compile("Maximum");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Максимум");
+
+        pattern = Pattern.compile("samples logged");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("значений измерено");
+
+        pattern = Pattern.compile("seconds");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("секунд");
+
+        pattern = Pattern.compile("minutes");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("минут");
+
+        pattern = Pattern.compile("hours");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("часов");
+
+        pattern = Pattern.compile("days");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("дней");
+
+        pattern = Pattern.compile("Empty. Not yet configured");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Настройки логгера сброшены");
+
+        pattern = Pattern.compile("Empty. Configured but not yet started");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Настройки логгера заданы. Измерение не запущено");
+
+        pattern = Pattern.compile("Running. No sample taken yet");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Измерение запущено. Нет считанных значений");
+
+        pattern = Pattern.compile("Running for");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("Идет измерение температуры в течение");
+
+        pattern = Pattern.compile("first high excursion after");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("первое значение выше заданного получено спустя");
+
+        pattern = Pattern.compile("first low excursion after");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("первое значение ниже заданного получено спустя");
+
+        pattern = Pattern.compile("battary is empty");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("низкий уровень зараяда батареи");
+
+        pattern = Pattern.compile("no space left for storing samples");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("память логгера заполнена");
+
+        pattern = Pattern.compile("stopped after the configured time");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("измерение закончилось спустя по истечении заданного времени");
+
+        pattern = Pattern.compile("last I2C access failed");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("ошибка I2C");
+
+        pattern = Pattern.compile("last SPI access failed");
+        matcher = pattern.matcher(result);
+        result = matcher.replaceAll("ошибка SPI");
+
+
+
+        return result;
+    }
 
 
     public static Object[] parsingEvent(int status){
+
         Object[] resultParsing = new Object[3];
+        Integer statusIsNull = status;
+        if (statusIsNull == null)
+        {
+            resultParsing[0] = MeasurementStatusModel.Measurement.Unknown;
+            resultParsing[1] = MeasurementStatusModel.Failure.Unknown;
+            resultParsing[2] = TemperatureStatusModel.Temperature.Unknown;
+            return resultParsing;
+        }
         int result = status&Protocol.APP_MSG_EVENT.APP_MSG_EVENT_PRISTINE.getValue();
         if (result == Protocol.APP_MSG_EVENT.APP_MSG_EVENT_PRISTINE.getValue()) resultParsing[0] = MeasurementStatusModel.Measurement.NotConfigured;
 
@@ -191,8 +292,19 @@ public class Utils {
     public static String convertSeconds (int seconds, Context context){
         String result = "hui";
         if (seconds<60) result = String.valueOf(seconds) + " " + context.getResources().getString(R.string.second);
-        if ((seconds>=60)&&(seconds<3600)) result = String.valueOf(seconds/60) + " " +context.getResources().getString(R.string.minute) + " " + String.valueOf(seconds % 60) + " " + context.getResources().getString(R.string.second);
-        if (seconds>=3600) result = String.valueOf(seconds/3600) + " " +context.getResources().getString(R.string.hour) + " " + String.valueOf(seconds % 3600 / 60) + " " +context.getResources().getString(R.string.minute) + " " + String.valueOf(seconds % 3600 % 60) + " " + context.getResources().getString(R.string.second);
+        if ((seconds>=60)&&(seconds<3600)){
+            result = String.valueOf(seconds/60) + " " +context.getResources().getString(R.string.minute);
+            if (seconds % 60 >0)
+                result += " " + String.valueOf(seconds % 60) + " " + context.getResources().getString(R.string.second);
+        }
+        if (seconds>=3600)
+        {
+            result = String.valueOf(seconds/3600) + " " +context.getResources().getString(R.string.hour);
+            if (seconds % 3600 / 60 >0)
+                result+= " " + String.valueOf(seconds % 3600 / 60) + " " +context.getResources().getString(R.string.minute);
+            if (seconds % 3600 % 60>0)
+                result = String.valueOf(seconds/3600) + " " +context.getResources().getString(R.string.hour)  + " " + String.valueOf(seconds % 3600 % 60) + " " + context.getResources().getString(R.string.second);
+        }
         return result;
     }
 

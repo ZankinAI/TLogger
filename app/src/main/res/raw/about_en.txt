@@ -1,10 +1,10 @@
-The application is designed to read temperature data recorded by the NHS3100 temperature logger.
+The application is designed to read temperature data recorded by the temperature logger.
 For the full operation of the application, the Android device must have an NFC module.
 To read data from the temperature logger, attach the device to the sensor. (Check if the NFC module is enabled!)
 If the temperature is successfully read, the Temperature page will display information about the state of the temperature logger and the current temperature that it was reading at the moment.
 To read a large amount of data, you need to hold the device next to the sensor for a while. The number of values read will be displayed as a message.
 After successful data reading, the "Temperature" tab can be swiped to the right, where information about the current configuration of the logger and the features of the values read will be available on the second tab of the page.
-On the third side of the page, a graph of temperature changes during measurements is displayed. The read data can be downloaded in CSV format to the Downloads folder. (Check the app's permissions to use files and media content!).
+On the third side of the page, a graph of temperature changes during measurements is displayed. The read data and the graph can be downloaded in CSV and PDF format to the Downloads folder. (Check the app's permissions to use files and media content!).
 The read information is added to the History page. When you select a record from the list, a window opens containing three tabs containing records for each data exchange with the same logger.
 On the "Settings" page, you can set the parameters of the temperature logger operation:
 - Time before the start of measurements;
